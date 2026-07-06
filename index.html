@@ -741,7 +741,7 @@ function renderMain(){
       <label class="upload-label" for="drawUpload">📷 Upload a photo of your drawing</label>
       <input type="file" id="drawUpload" accept="image/*" multiple style="display:none">
       <div class="gallery" id="gallery">${renderGallery(l.key)}</div>
-      <div class="key-note">Photos stay in this browser (localStorage). "AI Review" sends the photo + this lesson's task to the Anthropic API using your own key — set once, stored only in this browser. <button class="ref-badge" id="apiKeyBtn">${localStorage.getItem('drawlab_api_key')?'🔑 change API key':'🔑 set API key'}</button></div>
+      <div class="key-note">Photos stay in this browser (localStorage). "AI Review" sends the photo + this lesson's task to the Draw Lab Coach for feedback. <button class="ref-badge" id="unlockBtn">${localStorage.getItem('drawlab_unlock')?'🎟 change unlock code':'🎟 enter unlock code'}</button> <button class="ref-badge" id="apiKeyBtn">${localStorage.getItem('drawlab_api_key')?'🔑 own API key set':'🔑 use own API key'}</button></div>
     </div>
     <div class="recall-box">Before marking this done: could you redo the task from memory, without re-reading the lesson above? That quick self-test locks it in far better than re-reading does.</div>
     <div class="rowbtns">
@@ -819,9 +819,16 @@ function renderGallery(lessonKey){
 }
 
 function wireGallery(lessonKey){
+  const unlockBtn = document.getElementById('unlockBtn');
+  if(unlockBtn) unlockBtn.onclick = ()=>{
+    const k = window.prompt('Enter your Draw Lab Coach unlock code (DRAW-XXXXXXXX-XXXXXX). Stored only in this browser:', localStorage.getItem('drawlab_unlock')||'');
+    if(k===null) return;
+    if(k.trim()) localStorage.setItem('drawlab_unlock', k.trim().toUpperCase()); else localStorage.removeItem('drawlab_unlock');
+    render();
+  };
   const keyBtn = document.getElementById('apiKeyBtn');
   if(keyBtn) keyBtn.onclick = ()=>{
-    const k = window.prompt('Paste your Anthropic API key (sk-ant-...). It is stored only in this browser and only sent to api.anthropic.com:', localStorage.getItem('drawlab_api_key')||'');
+    const k = window.prompt('Advanced: paste your own Anthropic API key (sk-ant-...) to review directly without an unlock code. Stored only in this browser, sent only to api.anthropic.com:', localStorage.getItem('drawlab_api_key')||'');
     if(k===null) return;
     if(k.trim()) localStorage.setItem('drawlab_api_key', k.trim()); else localStorage.removeItem('drawlab_api_key');
     render();
@@ -868,14 +875,11 @@ function resizeImage(file){
   });
 }
 
+const COACH_URL = 'https://draw-lab-coach.onrender.com';
+
 async function aiReview(lessonKey, i, btn){
-  let apiKey = localStorage.getItem('drawlab_api_key');
-  if(!apiKey){
-    apiKey = window.prompt('Paste your Anthropic API key (sk-ant-...). Stored only in this browser:');
-    if(!apiKey || !apiKey.trim()){ showToast('No API key — review cancelled'); return; }
-    apiKey = apiKey.trim();
-    localStorage.setItem('drawlab_api_key', apiKey);
-  }
+  const apiKey = localStorage.getItem('drawlab_api_key');
+  if(!apiKey) return aiReviewViaCoach(lessonKey, i, btn);
   const l = lessonByKey(lessonKey);
   const im = getImages(lessonKey)[i];
   if(!im) return;
@@ -914,6 +918,50 @@ async function aiReview(lessonKey, i, btn){
     save();
   }catch(err){
     if(!String(err.message).includes('rejected')) showToast('Review failed: ' + err.message);
+    btn.disabled = false; btn.textContent = '🎨 AI Review';
+  }
+}
+
+async function aiReviewViaCoach(lessonKey, i, btn){
+  let code = localStorage.getItem('drawlab_unlock');
+  if(!code){
+    code = window.prompt('Enter your Draw Lab Coach unlock code (DRAW-XXXXXXXX-XXXXXX):');
+    if(!code || !code.trim()){ showToast('No unlock code — review cancelled'); return; }
+    code = code.trim().toUpperCase();
+    localStorage.setItem('drawlab_unlock', code);
+  }
+  const l = lessonByKey(lessonKey);
+  const im = getImages(lessonKey)[i];
+  if(!im) return;
+  btn.disabled = true; btn.textContent = 'Reviewing… (first one can take a minute)';
+  try{
+    const resp = await fetch(COACH_URL + '/review', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        image_b64: im.src.split(',')[1],
+        media_type: 'image/jpeg',
+        lesson_key: l.key,
+        lesson_title: l.title,
+        task: l.task,
+      })
+    });
+    if(!resp.ok){
+      const e = await resp.json().catch(()=>({}));
+      const msg = e.detail || ('HTTP ' + resp.status);
+      if(resp.status === 403){ localStorage.removeItem('drawlab_unlock'); showToast('Unlock code rejected — it was cleared, enter it again'); }
+      else if(resp.status === 402){ showToast('This unlock code has used all its reviews'); }
+      else showToast('Review failed: ' + msg);
+      btn.disabled = false; btn.textContent = '🎨 AI Review';
+      return;
+    }
+    const data = await resp.json();
+    im.review = data.review || '(no text returned)';
+    if(typeof data.remaining === 'number' && data.remaining <= 20) showToast(`${data.remaining} reviews left on this code`);
+    save();
+  }catch(err){
+    showToast('Review failed: ' + err.message + ' (the coach may be waking up — try again in a minute)');
     btn.disabled = false; btn.textContent = '🎨 AI Review';
   }
 }
