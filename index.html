@@ -1,0 +1,951 @@
+<title>Draw Lab — Game Art Fundamentals</title>
+<style>
+  :root{
+    --bg:#faf7f2; --ink:#2b2620; --sub:#6b6156; --line:#ddd3c4;
+    --accent:#a5502b; --accent-soft:#f0e0d0; --card:#fffdfa; --done:#5c7a4a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Georgia,'Iowan Old Style',serif;background:var(--bg);color:var(--ink);
+    display:flex;min-height:100vh}
+  nav{width:280px;flex:0 0 280px;background:var(--card);border-right:1px solid var(--line);
+    padding:20px 14px;overflow-y:auto;height:100vh;position:sticky;top:0}
+  nav h1{font-size:1.15rem;margin:0 0 2px;letter-spacing:.02em}
+  nav .tag{font-size:.72rem;color:var(--sub);margin-bottom:16px;display:block}
+  .mod{margin-bottom:6px}
+  .mod-head{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);
+    padding:10px 8px 4px;font-weight:bold}
+  .lesson-btn{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:none;
+    border:none;padding:7px 8px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:.88rem;
+    color:var(--ink)}
+  .lesson-btn:hover{background:var(--accent-soft)}
+  .lesson-btn.active{background:var(--accent-soft);font-weight:bold}
+  .lesson-btn .dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--sub);flex:0 0 9px}
+  .lesson-btn.done .dot{background:var(--done);border-color:var(--done)}
+  main{flex:1;padding:36px 48px;max-width:760px}
+  .crumb{font-size:.8rem;color:var(--sub);margin-bottom:6px}
+  h2{margin:0 0 4px;font-size:1.7rem}
+  .why{background:var(--accent-soft);border-left:3px solid var(--accent);padding:10px 16px;
+    border-radius:4px;font-size:.92rem;margin:16px 0}
+  .body p{line-height:1.65}
+  .task{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin:18px 0}
+  .task h4{margin:0 0 8px;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent)}
+  svg.diagram{display:block;margin:16px auto;background:#fff;border:1px solid var(--line);border-radius:8px}
+  .rowbtns{display:flex;gap:10px;align-items:center;margin-top:22px}
+  button.primary{background:var(--accent);color:#fff;border:none;padding:9px 18px;border-radius:6px;
+    cursor:pointer;font-family:inherit;font-size:.9rem}
+  button.ghost{background:none;border:1px solid var(--line);padding:9px 16px;border-radius:6px;
+    cursor:pointer;font-family:inherit;font-size:.9rem;color:var(--ink)}
+  textarea{width:100%;min-height:70px;font-family:inherit;font-size:.9rem;border:1px solid var(--line);
+    border-radius:6px;padding:10px;background:#fff;color:var(--ink);margin-top:6px}
+  .progress-wrap{margin-top:10px}
+  .bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden}
+  .bar-fill{height:100%;background:var(--done)}
+  .prompt-box{background:#fff;border:1px dashed var(--accent);border-radius:8px;padding:14px 18px;margin-top:18px}
+  .prompt-box .p-line{font-size:1.05rem;margin:4px 0}
+  .prompt-box .p-sub{font-size:.82rem;color:var(--sub)}
+  .tips{margin:20px 0}
+  .tips-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--sub);
+    margin-bottom:6px}
+  details.tip-card{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;background:var(--card)}
+  details.tip-card summary{cursor:pointer;padding:11px 16px;font-weight:bold;list-style:none;
+    display:flex;align-items:center;gap:9px;font-size:.95rem}
+  details.tip-card summary::-webkit-details-marker{display:none}
+  details.tip-card summary::before{content:"▸";color:var(--accent);transition:transform .15s}
+  details.tip-card[open] summary::before{transform:rotate(90deg)}
+  details.tip-card .tip-body{padding:2px 16px 14px}
+  details.tip-card ol{margin:0;padding-left:20px}
+  details.tip-card li{margin-bottom:10px;line-height:1.55;font-size:.9rem}
+  details.tip-card li b{color:var(--accent)}
+  .ref-badge{background:none;border:1px solid var(--accent);color:var(--accent);font-family:inherit;
+    font-size:.75rem;padding:3px 9px;border-radius:12px;cursor:pointer;margin-top:4px;display:inline-block}
+  .ref-badge:hover{background:var(--accent-soft)}
+  .glossary-btn{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:4px}
+  .glossary-group h3{font-size:1rem;color:var(--accent);margin:26px 0 10px;text-transform:uppercase;
+    letter-spacing:.06em}
+  .glossary-item{background:var(--card);border:1px solid var(--line);border-radius:8px;
+    padding:14px 18px;margin-bottom:10px}
+  .glossary-title{font-weight:bold;margin-bottom:6px}
+  .glossary-body{font-size:.9rem;line-height:1.55;margin-bottom:8px}
+  .roll-box{background:var(--accent-soft);border-radius:8px;padding:14px 18px;margin-bottom:20px}
+  .roll-box ol{margin:8px 0 0;padding-left:20px}
+  .roll-box li{margin-bottom:12px;font-size:.9rem;line-height:1.55}
+  .medium-tag{display:block;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;
+    color:var(--sub);margin-bottom:2px}
+  .mmap{display:flex;gap:3px;margin-top:8px}
+  .mmap-row{flex:1}
+  .mmap-bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden}
+  .mmap-fill{height:100%;background:var(--accent)}
+  .builds-on{font-size:.82rem;color:var(--sub);margin:2px 0 14px;cursor:pointer;display:inline-block}
+  .builds-on:hover{color:var(--accent)}
+  .recall-box{background:#fff;border:1px dashed var(--sub);border-radius:8px;padding:12px 16px;
+    font-size:.88rem;color:var(--sub);margin:14px 0}
+  .step-caption{font-size:.78rem;color:var(--sub);text-align:center;margin-top:-8px;margin-bottom:14px}
+  .reps-line{font-size:.82rem;color:var(--accent);margin-top:10px}
+  .saved-flash{font-size:.72rem;color:var(--done);opacity:0;transition:opacity .3s}
+  .saved-flash.show{opacity:1}
+  .dot-track{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+  .dt{width:8px;height:8px;border-radius:50%;background:var(--line);cursor:pointer;display:inline-block}
+  .dt.done{background:var(--done)}
+  .dt.current{background:var(--accent);width:10px;height:10px;transform:translateY(-1px)}
+  .tier-badge{font-size:.68rem;padding:2px 8px;border-radius:10px;font-weight:bold;letter-spacing:.03em}
+  .gallery{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}
+  .gal-item{width:180px}
+  .gal-item.expanded{width:100%}
+  .gal-item img{width:100%;border:1px solid var(--line);border-radius:6px;display:block;cursor:zoom-in;background:#fff}
+  .gal-item.expanded img{cursor:zoom-out}
+  .gal-btns{display:flex;gap:6px;margin-top:5px}
+  .gal-btns button{font-size:.72rem;padding:4px 9px}
+  .review-box{background:var(--accent-soft);border-radius:6px;padding:9px 11px;font-size:.79rem;line-height:1.5;margin-top:6px;white-space:pre-wrap}
+  .upload-label{display:inline-block;border:1px dashed var(--accent);color:var(--accent);border-radius:6px;
+    padding:8px 14px;cursor:pointer;font-size:.85rem;margin-top:4px}
+  .upload-label:hover{background:var(--accent-soft)}
+  .key-note{font-size:.72rem;color:var(--sub);margin-top:8px}
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(10px);
+    background:var(--ink);color:#fffdfa;padding:10px 20px;border-radius:20px;font-size:.85rem;
+    opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+
+<nav id="nav">
+  <h1>Draw Lab</h1>
+  <span class="tag">simple game art, pen &amp; charcoal</span>
+  <div class="progress-wrap">
+    <div class="bar"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+    <div class="p-sub" id="barText" style="font-size:.75rem;color:var(--sub);margin-top:4px"></div>
+    <div class="p-sub" id="streakText" style="font-size:.75rem;color:var(--accent);margin-top:3px"></div>
+    <div id="moduleMap" class="mmap"></div>
+  </div>
+  <div id="modList"></div>
+</nav>
+<main id="main"></main>
+
+<script>
+const GAMES = [
+  {name:"Rune Dash", subject:"hooded völva runner", note:"cloaked figure, staff, rune-crystal essence"},
+  {name:"Deadroot", subject:"corpse-mutation creature", note:"Spitter (acid sac + proboscis), Rootmass (bulk blob), cleaver enemy"},
+  {name:"Jade Fist", subject:"kung-fu fighter", note:"chunky cartoon outlines, distinct fighting stances"},
+  {name:"Rooftop Sprint", subject:"rooftop runner", note:"auto-runner silhouette, jump/slide poses"},
+  {name:"Flipline", subject:"one-button runner character", note:"simple bouncing/flipping silhouette"},
+  {name:"Camelot Hills", subject:"hooded Rogue Heretic / Knight / Barbarian brigand", note:"bold Darksiders-stylized 3D combat cast; sword or flail in hand"},
+];
+
+const MODULES = [
+  {
+    key:"m1", title:"Shape Foundations",
+    lessons:[
+      {key:"1.1", title:"The Big Three primitives", why:"Every character your games use — the völva, the Rootmass blob, the Jade Fist fighter — reduces to circles, boxes, and cylinders before it's anything else. This is the vocabulary you're missing, not talent.",
+        body:`<p>Sculptors and animators (Loomis, Bridgman) all start the same way: a <b>sphere</b> (head, joints, round masses), a <b>box</b> (torso, ribcage, hips — anything with a front/side/top), and a <b>cylinder</b> (limbs, necks, tubes).</p>
+        <p>Draw each one lightly, three times, from a different angle. Don't shade yet — just get comfortable turning a circle into a believable ball, and a rectangle into a believable box, in space.</p>`,
+        diagram:`<svg class="diagram" width="500" height="150" viewBox="0 0 500 150">
+          <circle cx="80" cy="75" r="45" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <ellipse cx="80" cy="75" rx="45" ry="15" fill="none" stroke="#a5502b" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <rect x="200" y="35" width="90" height="80" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <line x1="200" y1="35" x2="220" y2="20" stroke="#a5502b" stroke-width="1.2"/>
+          <line x1="290" y1="35" x2="310" y2="20" stroke="#a5502b" stroke-width="1.2"/>
+          <line x1="220" y1="20" x2="310" y2="20" stroke="#a5502b" stroke-width="1.2" stroke-dasharray="3 3"/>
+          <ellipse cx="410" cy="45" rx="30" ry="14" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <ellipse cx="410" cy="105" rx="30" ry="14" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <line x1="380" y1="45" x2="380" y2="105" stroke="#2b2620" stroke-width="2"/>
+          <line x1="440" y1="45" x2="440" y2="105" stroke="#2b2620" stroke-width="2"/>
+        </svg>`,
+        task:"Draw a sphere, a box, and a cylinder, each turned to 3 different angles. 9 shapes total, light construction lines only, 10 minutes."},
+      {key:"1.2", title:"Building a humanoid armature", why:"This is exactly how you'd start the völva or a Jade Fist fighter before any costume or muscle detail goes on.",
+        body:`<p>Stack the primitives into a simple stick-and-ball armature: oval head, cylinder neck, box ribcage, box hips, cylinder limbs with small spheres at every joint (shoulder, elbow, hip, knee).</p>
+        <p>Keep it under 2 minutes per figure. The goal is speed and proportion, not beauty.</p>`,
+        diagram:`<svg class="diagram" width="220" height="260" viewBox="0 0 220 260">
+          <ellipse cx="110" cy="30" rx="20" ry="24" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <line x1="110" y1="54" x2="110" y2="75" stroke="#2b2620" stroke-width="2"/>
+          <rect x="80" y="75" width="60" height="70" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <rect x="85" y="150" width="50" height="30" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <circle cx="60" cy="90" r="8" fill="none" stroke="#a5502b" stroke-width="1.5"/>
+          <circle cx="45" cy="140" r="7" fill="none" stroke="#a5502b" stroke-width="1.5"/>
+          <line x1="80" y1="90" x2="60" y2="90" stroke="#2b2620" stroke-width="2"/>
+          <line x1="60" y1="90" x2="45" y2="140" stroke="#2b2620" stroke-width="2"/>
+          <circle cx="160" cy="90" r="8" fill="none" stroke="#a5502b" stroke-width="1.5"/>
+          <circle cx="175" cy="140" r="7" fill="none" stroke="#a5502b" stroke-width="1.5"/>
+          <line x1="140" y1="90" x2="160" y2="90" stroke="#2b2620" stroke-width="2"/>
+          <line x1="160" y1="90" x2="175" y2="140" stroke="#2b2620" stroke-width="2"/>
+          <circle cx="90" cy="200" r="8" fill="none" stroke="#a5502b" stroke-width="1.5"/>
+          <line x1="95" y1="180" x2="90" y2="200" stroke="#2b2620" stroke-width="2"/>
+          <line x1="90" y1="200" x2="85" y2="245" stroke="#2b2620" stroke-width="2"/>
+          <circle cx="130" cy="200" r="8" fill="none" stroke="#a5502b" stroke-width="1.5"/>
+          <line x1="125" y1="180" x2="130" y2="200" stroke="#2b2620" stroke-width="2"/>
+          <line x1="130" y1="200" x2="135" y2="245" stroke="#2b2620" stroke-width="2"/>
+        </svg>`,
+        task:"Draw 3 armatures in 3 different poses (standing, mid-run, crouched), 2 minutes each. Don't erase — just move on."},
+      {key:"1.3", title:"Building a creature from blobs", why:"This is how you'd rough in a Deadroot Rootmass or Spitter before adding the acid-sac / proboscis detail.",
+        body:`<p>Non-human creatures skip the box-torso and lean on overlapping ovals of different sizes — a big blob for mass, smaller blobs for a head or a bulging sac, tapered cylinders for tentacle-limbs.</p>
+        <p>Overlap the shapes rather than placing them edge to edge — that overlap is what makes the mass feel like one connected body instead of stuck-together parts.</p>`,
+        diagram:`<svg class="diagram" width="380" height="180" viewBox="0 0 380 180">
+          <ellipse cx="190" cy="110" rx="70" ry="48" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <ellipse cx="130" cy="70" rx="34" ry="28" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <ellipse cx="245" cy="60" rx="20" ry="16" fill="none" stroke="#a5502b" stroke-width="2"/>
+          <path d="M 258 55 Q 300 50 310 30" fill="none" stroke="#a5502b" stroke-width="2"/>
+          <ellipse cx="140" cy="150" rx="16" ry="10" fill="none" stroke="#2b2620" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <ellipse cx="235" cy="152" rx="16" ry="10" fill="none" stroke="#2b2620" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <text x="190" y="20" font-size="11" fill="#6b6156" text-anchor="middle">big mass oval + smaller overlapping ovals + one tapered "sac" feature</text>
+        </svg>`,
+        caption:"Overlap order: biggest mass oval first → smaller head/limb ovals overlapping into it → one tapered feature last",
+        task:"Rough in 3 blob-creatures using only overlapping ovals of varying sizes, no straight lines. 5 minutes each."},
+    ]
+  },
+  {
+    key:"m2", title:"Silhouette-First Design",
+    lessons:[
+      {key:"2.1", title:"Why silhouette is the whole game", why:"Your own Deadroot notes call this out directly: enemy readability was 'a silhouette problem, not an engine problem.' This is the single highest-leverage skill for game art.",
+        body:`<p>A player reads a game character in a fraction of a second, usually in motion, usually small on screen. If the black silhouette alone doesn't tell you what it is and what it does, no amount of shading will fix it.</p>
+        <p>This is also good news for you specifically: silhouette design is about <i>shape decisions</i>, not fine rendering — and shape decisions are trainable through repetition in a way that feels very different from "invent a whole character from nothing."</p>`,
+        diagram:`<svg class="diagram" width="420" height="160" viewBox="0 0 420 160">
+          <ellipse cx="95" cy="85" rx="36" ry="44" fill="#2b2620"/>
+          <path d="M 93 44 L 138 20 L 124 52 Z" fill="#2b2620"/>
+          <text x="95" y="148" font-size="11" fill="#6b6156" text-anchor="middle">how you draw it — big, on paper</text>
+          <rect x="255" y="35" width="110" height="80" fill="none" stroke="#a5502b" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <g transform="translate(310,72) scale(0.30)">
+            <ellipse cx="0" cy="13" rx="36" ry="44" fill="#2b2620"/>
+            <path d="M -2 -28 L 43 -52 L 29 -20 Z" fill="#2b2620"/>
+          </g>
+          <text x="310" y="148" font-size="11" fill="#a5502b" text-anchor="middle">how the player sees it — tiny, in motion</text>
+        </svg>`,
+        caption:"Squint test: shrink the design in your head — if the tiny version still reads, the silhouette works; detail is invisible at game size",
+        task:"Pick any character from one of your games. Fill its rough shape solid black with a marker or heavy pencil scribble. Can you tell what it is with zero detail? Write one sentence on what reads and what doesn't."},
+      {key:"2.2", title:"The silhouette test", why:"Use this as a checkpoint on every design from here on, including your game assignments in Module 6.",
+        body:`<p>After any construction sketch, do a quick black-fill pass (even just scribbling solid with your pencil) before you commit to line work or shading. If two different creatures would produce the same black blob, exaggerate a feature until they don't.</p>`,
+        diagram:`<svg class="diagram" width="420" height="150" viewBox="0 0 420 150">
+          <text x="90" y="20" font-size="12" fill="#6b6156" text-anchor="middle">weak — generic blob</text>
+          <ellipse cx="90" cy="85" rx="42" ry="50" fill="#2b2620"/>
+          <text x="320" y="20" font-size="12" fill="#a5502b" text-anchor="middle">strong — reads instantly</text>
+          <ellipse cx="320" cy="95" rx="34" ry="38" fill="#2b2620"/>
+          <path d="M 320 60 Q 355 40 375 65 Q 380 70 370 78 Q 350 60 320 75 Z" fill="#2b2620"/>
+          <line x1="0" y1="130" x2="420" y2="130" stroke="#ddd3c4" stroke-width="1"/>
+        </svg>`,
+        task:"Take one armature from Lesson 1.2 or one blob-creature from 1.3. Silhouette-fill it. If it's generic, add ONE exaggerated feature (a hood, a huge claw, a hunch) and silhouette-fill again."},
+      {key:"2.3", title:"One iconic feature", why:"This is exactly the trick your games already use: Deadroot's Spitter reads by its proboscis tube, the cleaver enemy reads by its cleaver silhouette, Jade Fist reads by chunky outlines and distinct stances.",
+        body:`<p>You don't need to invent a whole new creature from nothing — you need to pick <b>one</b> feature and push it further than feels natural. A slightly bigger hood becomes a dramatically bigger hood. A hand becomes a cleaver. This is a much smaller, more concrete decision than "design a character," and it's the actual skill professional character designers lean on.</p>`,
+        diagram:`<svg class="diagram" width="380" height="150" viewBox="0 0 380 150">
+          <text x="80" y="20" font-size="11" fill="#6b6156" text-anchor="middle">reasonable</text>
+          <ellipse cx="80" cy="80" rx="34" ry="42" fill="#2b2620"/>
+          <ellipse cx="70" cy="45" rx="10" ry="8" fill="#2b2620"/>
+          <path d="M 78 40 L 100 30" stroke="#2b2620" stroke-width="6" stroke-linecap="round"/>
+          <path d="M 150 75 L 200 75" stroke="#a5502b" stroke-width="2" marker-end="url(#arrow)"/>
+          <text x="175" y="65" font-size="10" fill="#a5502b" text-anchor="middle">push it 2x</text>
+          <text x="300" y="20" font-size="11" fill="#a5502b" text-anchor="middle">iconic</text>
+          <ellipse cx="300" cy="85" rx="34" ry="42" fill="#2b2620"/>
+          <ellipse cx="290" cy="48" rx="10" ry="8" fill="#2b2620"/>
+          <path d="M 298 40 L 355 10 L 340 45 Z" fill="#2b2620"/>
+          <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a5502b"/></marker></defs>
+        </svg>`,
+        caption:"One feature, pushed further than feels reasonable — everything else stays the same",
+        task:"Redraw one silhouette from 2.2, this time exaggerating one single feature to twice the size you think is reasonable."},
+    ]
+  },
+  {
+    key:"m3", title:"Gesture Before Detail",
+    lessons:[
+      {key:"3.1", title:"The line of action", why:"A dynamic Jade Fist punch or a Rooftop Sprint jump pose lives or dies on this one line, before any anatomy goes on top.",
+        body:`<p>Before drawing any shape, draw one single sweeping curve or diagonal that captures the energy of the pose — a C-curve for a crouch, a diagonal for a lunge or fall. Every other shape gets built along that line.</p>`,
+        diagram:`<svg class="diagram" width="260" height="180" viewBox="0 0 260 180">
+          <path d="M 40 150 Q 100 100 90 50 Q 85 20 130 15" fill="none" stroke="#a5502b" stroke-width="2.5"/>
+          <circle cx="130" cy="15" r="14" fill="none" stroke="#2b2620" stroke-width="1.5" stroke-dasharray="2 2"/>
+          <ellipse cx="95" cy="90" rx="16" ry="34" fill="none" stroke="#2b2620" stroke-width="1.5" stroke-dasharray="2 2" transform="rotate(-25 95 90)"/>
+          <line x1="55" y1="150" x2="220" y2="140" stroke="#ddd3c4" stroke-width="1"/>
+        </svg>`,
+        task:"Draw 6 lines of action only (no bodies yet) — 3 aggressive/lunging, 3 relaxed/slumped. 30 seconds each, don't lift the pen mid-line if you can help it."},
+      {key:"3.2", title:"Weight and balance", why:"A run cycle or a fighting stance reads as fake the instant the weight looks wrong — this is usually the actual reason a pose 'feels off,' not the anatomy.",
+        body:`<p>Find the character's center of gravity and make sure it lands over their base of support (feet, or whatever's touching the ground). A standing figure leaning back needs a counterbalance forward, and vice versa — like a scale.</p>`,
+        diagram:`<svg class="diagram" width="260" height="190" viewBox="0 0 260 190">
+          <ellipse cx="130" cy="35" rx="16" ry="18" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <path d="M 130 53 Q 100 90 90 120" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <circle cx="115" cy="88" r="4" fill="#a5502b"/>
+          <line x1="115" y1="88" x2="115" y2="160" stroke="#a5502b" stroke-width="1.5" stroke-dasharray="3 3"/>
+          <line x1="70" y1="160" x2="160" y2="160" stroke="#ddd3c4" stroke-width="2"/>
+          <path d="M 90 120 L 70 160 M 90 120 L 110 160" stroke="#2b2620" stroke-width="2" fill="none"/>
+          <circle cx="115" cy="160" r="5" fill="none" stroke="#a5502b" stroke-width="2"/>
+          <text x="130" y="182" font-size="10" fill="#6b6156" text-anchor="middle">center of gravity lands inside the base of support</text>
+        </svg>`,
+        caption:"Drop a plumb line from the center of mass — it needs to land inside the foot/base, not outside it",
+        task:"Take 2 of your lines of action from 3.1 and build a rough armature (Module 1 style) on top, checking that the weight balances over the base."},
+      {key:"3.3", title:"Speed gestures", why:"This breaks the 'careful copying' habit that serves your shading but blocks quick invention — the whole point is too fast to overthink.",
+        body:`<p>Set a 30-second timer. Draw a line of action plus a rough armature. Move to the next one immediately, no matter how it looks. Quantity over quality here builds the instinct you'll need for Module 5's remix work.</p>`,
+        task:"10 gestures, 30 seconds each, 5-minute total session. Any subject — people walking by, game screenshots, your own past sketches."},
+    ]
+  },
+  {
+    key:"m4", title:"Simple Animation Principles",
+    lessons:[
+      {key:"4.1", title:"Squash and stretch", why:"This single principle is what makes a Flipline bounce or a Rooftop Sprint jump feel alive instead of stiff — it's the highest-value animation trick for a beginner.",
+        body:`<p>Anything with mass compresses on impact and stretches when moving fast, while keeping roughly the same volume (wider when squashed, narrower when stretched). A bouncing ball is the classic drill: round in the air, squashed flat at contact, stretched into an oval as it launches back up.</p>`,
+        diagram:`<svg class="diagram" width="420" height="140" viewBox="0 0 420 140">
+          <path d="M 40 40 Q 95 95 150 76 Q 215 95 280 40 Q 335 20 390 60" fill="none" stroke="#ddd3c4" stroke-width="1.5" stroke-dasharray="4 3"/>
+          <circle cx="40" cy="30" r="24" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <ellipse cx="150" cy="82" rx="30" ry="12" fill="none" stroke="#a5502b" stroke-width="2"/>
+          <ellipse cx="280" cy="30" rx="16" ry="32" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <circle cx="390" cy="55" r="20" fill="none" stroke="#2b2620" stroke-width="2" opacity="0.5"/>
+          <line x1="15" y1="95" x2="405" y2="95" stroke="#ddd3c4" stroke-width="1.5"/>
+          <text x="40" y="118" font-size="10" fill="#6b6156" text-anchor="middle">1 — round in air</text>
+          <text x="150" y="118" font-size="10" fill="#a5502b" text-anchor="middle">2 — squash on contact</text>
+          <text x="280" y="118" font-size="10" fill="#6b6156" text-anchor="middle">3 — stretch launching</text>
+          <text x="390" y="118" font-size="10" fill="#6b6156" text-anchor="middle">4 — round again</text>
+        </svg>`,
+        caption:"Same volume in every frame: what it loses in height it gains in width — the dashed arc is the path of travel",
+        task:"Draw a 4-frame bouncing ball: round → squashed at contact → stretched launching up → round again."},
+      {key:"4.2", title:"The 3-frame walk cycle", why:"This is the sprite-economy standard your own games use — contact, passing, contact — the same 3-pose logic behind the völva's or the runner's walk.",
+        body:`<p>Simple game sprites don't need 24 frames. Three poses carry a believable walk: <b>contact</b> (both feet touching ground, legs spread, this is the widest/lowest point), <b>passing</b> (one leg swings past the other, body at its highest point), then <b>contact</b> again on the opposite foot.</p>`,
+        diagram:`<svg class="diagram" width="420" height="160" viewBox="0 0 420 160">
+          <g stroke="#2b2620" stroke-width="2" fill="none">
+            <circle cx="60" cy="40" r="14"/><line x1="60" y1="54" x2="60" y2="90"/>
+            <line x1="60" y1="90" x2="35" y2="130"/><line x1="60" y1="90" x2="85" y2="130"/>
+            <line x1="60" y1="65" x2="35" y2="85"/><line x1="60" y1="65" x2="85" y2="85"/>
+          </g>
+          <g stroke="#a5502b" stroke-width="2" fill="none">
+            <circle cx="210" cy="30" r="14"/><line x1="210" y1="44" x2="210" y2="82"/>
+            <line x1="210" y1="82" x2="190" y2="120"/><line x1="210" y1="82" x2="235" y2="115"/>
+            <line x1="210" y1="58" x2="185" y2="75"/><line x1="210" y1="58" x2="235" y2="75"/>
+          </g>
+          <g stroke="#2b2620" stroke-width="2" fill="none">
+            <circle cx="360" cy="40" r="14"/><line x1="360" y1="54" x2="360" y2="90"/>
+            <line x1="360" y1="90" x2="335" y2="130"/><line x1="360" y1="90" x2="385" y2="130"/>
+            <line x1="360" y1="65" x2="335" y2="85"/><line x1="360" y1="65" x2="385" y2="85"/>
+          </g>
+          <line x1="20" y1="135" x2="400" y2="135" stroke="#ddd3c4" stroke-width="1"/>
+        </svg>`,
+        task:"Draw the 3-pose walk cycle (contact / passing / contact) as simple armatures. Then do it again as a solid silhouette."},
+      {key:"4.3", title:"The 2-frame idle", why:"Every idle animation in a simple 2D game — the völva standing still, a Deadroot creature waiting — is usually just this.",
+        body:`<p>A resting pose and a slightly-raised/shifted pose, alternated slowly, reads as breathing or subtle weight-shift. It's the cheapest animation that still feels alive, and it's just squash/stretch at a tiny scale.</p>`,
+        diagram:`<svg class="diagram" width="260" height="150" viewBox="0 0 260 150">
+          <ellipse cx="80" cy="70" rx="26" ry="46" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <text x="80" y="15" font-size="10" fill="#6b6156" text-anchor="middle">exhale — lower / wider</text>
+          <path d="M 130 70 L 160 70" stroke="#a5502b" stroke-width="1.5" marker-end="url(#arrow2)"/>
+          <ellipse cx="195" cy="63" rx="22" ry="50" fill="none" stroke="#a5502b" stroke-width="2"/>
+          <text x="195" y="15" font-size="10" fill="#a5502b" text-anchor="middle">inhale — taller / narrower</text>
+          <line x1="20" y1="122" x2="240" y2="122" stroke="#ddd3c4" stroke-width="1"/>
+          <defs><marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a5502b"/></marker></defs>
+        </svg>`,
+        caption:"Alternate these two slowly — the difference should be barely noticeable, that subtlety is what reads as breathing",
+        task:"Draw 2 nearly-identical poses of a standing character, one very slightly lower/wider (exhale) and one very slightly taller/narrower (inhale)."},
+      {key:"4.4", title:"Anticipation", why:"The wind-up before a Jade Fist punch or a Rooftop Sprint jump is what sells the impact after it — skipping straight to the action pose is the #1 thing that makes beginner action poses feel flat.",
+        body:`<p>Before any big action, the body moves briefly in the <i>opposite</i> direction first — a pulled-back fist before the punch, a crouch before the jump. Three poses: anticipation (wind-up) → action (the punch/jump itself) → follow-through (overshoot before settling).</p>`,
+        diagram:`<svg class="diagram" width="420" height="160" viewBox="0 0 420 160">
+          <g stroke="#2b2620" stroke-width="2" fill="none">
+            <circle cx="70" cy="55" r="13"/><path d="M 70 68 Q 55 90 60 115"/>
+            <line x1="60" y1="115" x2="45" y2="145"/><line x1="60" y1="115" x2="78" y2="145"/>
+            <line x1="66" y1="80" x2="40" y2="70"/>
+          </g>
+          <path d="M 95 60 L 115 60" stroke="#6b6156" stroke-width="1.5" marker-end="url(#arrow4)" opacity="0.5" transform="rotate(180 105 60)"/>
+          <text x="65" y="20" font-size="10" fill="#6b6156" text-anchor="middle">1 — anticipation: move AWAY first</text>
+          <g stroke="#a5502b" stroke-width="2" fill="none">
+            <circle cx="215" cy="45" r="13"/><path d="M 215 58 Q 225 85 218 110"/>
+            <line x1="218" y1="110" x2="195" y2="145"/><line x1="218" y1="110" x2="240" y2="140"/>
+            <line x1="218" y1="68" x2="270" y2="58"/>
+          </g>
+          <path d="M 272 58 L 300 52" stroke="#a5502b" stroke-width="2.5" marker-end="url(#arrow4)"/>
+          <text x="228" y="20" font-size="10" fill="#a5502b" text-anchor="middle">2 — action: full commitment</text>
+          <g stroke="#2b2620" stroke-width="2" fill="none">
+            <circle cx="360" cy="50" r="13"/><path d="M 360 63 Q 372 88 366 112"/>
+            <line x1="366" y1="112" x2="345" y2="145"/><line x1="366" y1="112" x2="385" y2="142"/>
+            <line x1="364" y1="72" x2="400" y2="82"/>
+          </g>
+          <text x="368" y="20" font-size="10" fill="#6b6156" text-anchor="middle">3 — follow-through: overshoot</text>
+          <line x1="20" y1="146" x2="405" y2="146" stroke="#ddd3c4" stroke-width="1"/>
+          <defs><marker id="arrow4" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a5502b"/></marker></defs>
+        </svg>`,
+        caption:"The wind-up moves opposite to the action — that brief backwards beat is what makes the forward beat feel powerful",
+        task:"Draw a 3-pose punch or jump: wind-up, action, follow-through, using your Module 3 gesture skills for the line of action in each."},
+    ]
+  },
+  {
+    key:"m5", title:"The Remix Method",
+    lessons:[
+      {key:"5.1", title:"Why straight copying caps you", why:"This module exists specifically because you said you can copy anything from a photo but freeze up designing from scratch — this is the bridge, not a lecture.",
+        body:`<p>Copying trains your hand and your eye for shading, proportion, and value — real, hard-won skills. What it doesn't train is <i>decision-making</i>: which features to keep, which to drop, which to exaggerate. Design is 90% decisions, 10% drawing. The good news: you can practice decisions on top of references, without ever staring at a truly blank page.</p>`,
+        task:"No drawing yet. Find 2 reference photos or existing game characters (yours or others'). List 3 features from each you could imagine swapping or combining."},
+      {key:"5.2", title:"Two-reference merge", why:"This is the single most direct way to turn 'I can copy anything' into 'I can design something new' — you're never inventing from nothing, only recombining things you can already render.",
+        body:`<p>Pick two references — say, a photo of a real animal and a Deadroot creature, or a martial arts photo and a Jade Fist stance. Copy the <b>silhouette</b> of one and the <b>one iconic feature</b> (Module 2.3) of the other onto it. That combination is already an original design, and you rendered every piece of it from something real.</p>`,
+        diagram:`<svg class="diagram" width="420" height="150" viewBox="0 0 420 150">
+          <text x="70" y="20" font-size="11" fill="#6b6156" text-anchor="middle">reference A: silhouette</text>
+          <ellipse cx="70" cy="90" rx="40" ry="45" fill="#2b2620"/>
+          <text x="210" y="20" font-size="11" fill="#6b6156" text-anchor="middle">reference B: one feature</text>
+          <path d="M 190 60 Q 210 40 235 60 Q 245 65 232 75 Q 210 60 192 70 Z" fill="#a5502b"/>
+          <text x="210" y="110" font-size="10" fill="#6b6156" text-anchor="middle">(claw / tube / spike)</text>
+          <path d="M 270 90 L 300 90" stroke="#a5502b" stroke-width="2" marker-end="url(#arrow3)"/>
+          <text x="360" y="20" font-size="11" fill="#a5502b" text-anchor="middle">merged design</text>
+          <ellipse cx="360" cy="90" rx="40" ry="45" fill="#2b2620"/>
+          <path d="M 380 55 Q 405 38 425 55 Q 432 60 420 68 Q 400 55 382 65 Z" fill="#2b2620"/>
+          <defs><marker id="arrow3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a5502b"/></marker></defs>
+        </svg>`,
+        caption:"Take the overall mass from one reference, graft the one iconic feature from the other on top",
+        task:"Do one two-reference merge. Construction lines first (Module 1), silhouette check (Module 2.2), then render/shade as usual."},
+      {key:"5.3", title:"Five thumbnails, five minutes", why:"Professional character designers almost never pick their first idea — they generate a cheap batch and pick the strongest, which takes the pressure off any single drawing being 'the' design.",
+        body:`<p>Same concept (say, 'a new Deadroot enemy'), 5 tiny rough silhouettes, one minute each, no detail. Then pick the one with the clearest silhouette read (Module 2) and only render that one.</p>`,
+        diagram:`<svg class="diagram" width="420" height="110" viewBox="0 0 420 110">
+          ${[40,120,200,280,360].map((x,i)=>`
+            <ellipse cx="${x}" cy="55" rx="${28+i*2}" ry="${34-i}" fill="#2b2620" opacity="${0.55+i*0.09}"/>
+          `).join('')}
+          <circle cx="280" cy="55" r="42" fill="none" stroke="#a5502b" stroke-width="2" stroke-dasharray="4 3"/>
+          <text x="280" y="102" font-size="10" fill="#a5502b" text-anchor="middle">strongest silhouette wins</text>
+        </svg>`,
+        caption:"Five rough, cheap, one-minute silhouettes — only the circled winner gets full rendering",
+        task:"5 one-minute silhouette thumbnails of a single concept. Circle your favorite. Only that one gets full rendering."},
+      {key:"5.4", title:"Change one thing", why:"A low-stakes way to practice invention: you're never staring at a blank page, only altering something that already exists.",
+        body:`<p>Take any drawing you've already made — from this app or old sketchbook work — and redraw it changing exactly one feature (pose, one accessory, proportions of one limb). Repeat with a different single change.</p>`,
+        diagram:`<svg class="diagram" width="420" height="140" viewBox="0 0 420 140">
+          <ellipse cx="70" cy="70" rx="30" ry="40" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <ellipse cx="210" cy="70" rx="30" ry="40" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <path d="M 195 45 L 175 20" stroke="#a5502b" stroke-width="2.5"/>
+          <ellipse cx="350" cy="80" rx="30" ry="30" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <text x="70" y="125" font-size="10" fill="#6b6156" text-anchor="middle">original</text>
+          <text x="210" y="125" font-size="10" fill="#a5502b" text-anchor="middle">+ one accessory</text>
+          <text x="350" y="125" font-size="10" fill="#a5502b" text-anchor="middle">changed proportion</text>
+        </svg>`,
+        caption:"Same base drawing, one deliberate change at a time — never a blank page",
+        task:"Redraw one existing sketch 3 times, changing exactly one feature each time."},
+    ]
+  },
+  {
+    key:"m6", title:"Apply It To Your Games",
+    lessons:[
+      {key:"6.1", title:"Rune Dash — völva walk cycle", why:"Rune Dash's hooded völva runner is currently pure procedural vector art with no hand-drawn reference sprite — a hand-drawn cycle could seed a future raster pass.",
+        body:`<p>Using Module 4.2's 3-pose walk cycle and the hooded silhouette, draw the völva walking: contact / passing / contact. Keep the cloak/hood as the one iconic silhouette feature (Module 2.3).</p>`,
+        task:"3-frame walk cycle of the hooded völva, silhouette-checked, then lightly rendered with your shading strength."},
+      {key:"6.2", title:"Deadroot — a new corpse-creature", why:"Deadroot's own dev notes call enemy variety a silhouette design problem — this is a real assignment, not a made-up one.",
+        body:`<p>Use the Remix Method (5.2) combining a real reference (an insect, a root system, a bloated animal) with one existing Deadroot silhouette idea (acid sac, cleaver, bulk mass). Thumbnail 5 versions (5.3), pick the strongest.</p>`,
+        diagram:`<svg class="diagram" width="380" height="150" viewBox="0 0 380 150">
+          <ellipse cx="150" cy="95" rx="55" ry="42" fill="#2b2620"/>
+          <ellipse cx="95" cy="65" rx="26" ry="22" fill="#2b2620"/>
+          <path d="M 200 70 Q 250 55 270 30 Q 275 25 268 20 Q 245 40 198 60 Z" fill="#a5502b"/>
+          <ellipse cx="270" cy="20" rx="9" ry="7" fill="#a5502b"/>
+          <text x="150" y="20" font-size="11" fill="#6b6156" text-anchor="middle">bulk mass + head, blob construction (1.3)</text>
+          <text x="270" y="140" font-size="10" fill="#a5502b" text-anchor="middle">grafted proboscis (2.3)</text>
+        </svg>`,
+        caption:"Blob-construction mass (1.3) + one grafted iconic feature (2.3) — your two oldest skills doing the new work",
+        task:"5 thumbnails → 1 finished silhouette+construction sketch of an original corpse-creature."},
+      {key:"6.3", title:"Jade Fist — a punch, 3 frames", why:"Jade Fist's whole cartoon art pass leans on chunky outlines and distinct stances per fighter — exactly what Modules 3 and 4 train.",
+        body:`<p>Line of action (3.1) → weight-checked armature (3.2) → anticipation/action/follow-through (4.4). Exaggerate the fist or stance as your one iconic feature.</p>`,
+        task:"3-pose punch sequence for an original or existing Jade Fist fighter, rendered with full shading."},
+      {key:"6.4", title:"Rooftop Sprint / Flipline — a run cycle", why:"Both are runner games where a lively squash-stretch run cycle is the single most-seen animation in the whole game.",
+        body:`<p>Combine 4.1's squash/stretch with 4.2's 3-pose walk cycle, but push the poses further (bigger stride, more lean) since running reads as more extreme than walking.</p>`,
+        task:"3-frame run cycle (contact/passing/contact) for a runner silhouette, with visible squash at ground contact."},
+      {key:"6.5", title:"Camelot Hills — the Rogue turnaround", why:"Camelot Hills is a 3D game (the hooded Rogue Heretic, the Barbarian brigands, the Knight captain) — the model has to read correctly from every camera angle, not just one flattering pose.",
+        body:`<p>This is a new kind of exercise: instead of one silhouette, draw the <b>same</b> hooded-rogue character three times side-by-side — front view, 3/4 view, side profile — keeping the hood shape, cloak silhouette, and proportions identical across all three. This is exactly the discipline a 3D character sheet demands, and it's a different muscle than a single dynamic pose.</p>
+        <p>Keep it simple: reuse your Module 1 armature for all three, just rotated, then drape the hood/cloak silhouette (Module 2) on top consistently.</p>`,
+        diagram:`<svg class="diagram" width="480" height="200" viewBox="0 0 480 200">
+          <g stroke="#2b2620" stroke-width="2" fill="none">
+            <path d="M 60 40 Q 40 60 42 100 L 38 170 L 90 170 L 86 100 Q 88 60 68 40 Z"/>
+            <ellipse cx="64" cy="35" rx="16" ry="18"/>
+          </g>
+          <g stroke="#a5502b" stroke-width="2" fill="none">
+            <path d="M 210 40 Q 195 60 200 100 L 195 170 L 245 170 L 250 100 Q 252 58 232 38 Z"/>
+            <ellipse cx="222" cy="34" rx="15" ry="17"/>
+          </g>
+          <g stroke="#2b2620" stroke-width="2" fill="none">
+            <path d="M 370 40 Q 355 62 360 100 L 358 170 L 395 170 L 393 100 Q 396 60 380 40 Z"/>
+            <ellipse cx="378" cy="34" rx="13" ry="17"/>
+          </g>
+          <text x="64" y="195" font-size="11" fill="#6b6156" text-anchor="middle">front</text>
+          <text x="222" y="195" font-size="11" fill="#6b6156" text-anchor="middle">3/4</text>
+          <text x="378" y="195" font-size="11" fill="#6b6156" text-anchor="middle">side/profile</text>
+        </svg>`,
+        task:"Draw the hooded Heretic (or a brigand/knight) from 3 angles — front, 3/4, profile — same proportions and hood silhouette in all three."},
+      {key:"6.6", title:"Camelot Hills — a sword-strike sequence", why:"Camelot Hills' whole combat identity is 'Darksiders, not Dark Souls' — big, bold, empowered strikes, not cautious ones. Your drawing needs to carry that same energy.",
+        body:`<p>Apply Module 4.4's anticipation/action/follow-through directly to a knight's sword swing: a big pulled-back wind-up (weight low, blade back), then an exaggerated full-extension strike (weight thrown forward, blade fully committed), then an overshoot follow-through before recovery. Push all three poses bigger and bolder than feels reasonable — that's the Darksiders energy this game is built on.</p>`,
+        diagram:`<svg class="diagram" width="420" height="170" viewBox="0 0 420 170">
+          <g stroke="#2b2620" stroke-width="2" fill="none">
+            <circle cx="60" cy="40" r="13"/><line x1="60" y1="53" x2="55" y2="100"/>
+            <line x1="55" y1="100" x2="35" y2="140"/><line x1="55" y1="100" x2="75" y2="145"/>
+            <line x1="58" y1="70" x2="20" y2="60"/>
+          </g>
+          <path d="M 20 60 L 5 25" stroke="#a5502b" stroke-width="3"/>
+          <text x="55" y="20" font-size="10" fill="#6b6156" text-anchor="middle">wind-up</text>
+          <g stroke="#a5502b" stroke-width="2" fill="none">
+            <circle cx="210" cy="45" r="13"/><line x1="210" y1="58" x2="200" y2="95"/>
+            <line x1="200" y1="95" x2="175" y2="140"/><line x1="200" y1="95" x2="225" y2="140"/>
+            <line x1="205" y1="65" x2="260" y2="55"/>
+          </g>
+          <path d="M 260 55 L 310 40" stroke="#a5502b" stroke-width="3"/>
+          <text x="230" y="20" font-size="10" fill="#a5502b" text-anchor="middle">strike — full extension</text>
+          <g stroke="#2b2620" stroke-width="2" fill="none">
+            <circle cx="360" cy="42" r="13"/><line x1="360" y1="55" x2="355" y2="100"/>
+            <line x1="355" y1="100" x2="335" y2="140"/><line x1="355" y1="100" x2="375" y2="140"/>
+            <line x1="358" y1="68" x2="395" y2="90"/>
+          </g>
+          <path d="M 395 90 L 415 120" stroke="#a5502b" stroke-width="3"/>
+          <text x="365" y="20" font-size="10" fill="#6b6156" text-anchor="middle">follow-through</text>
+          <line x1="10" y1="150" x2="410" y2="150" stroke="#ddd3c4" stroke-width="1"/>
+        </svg>`,
+        caption:"Push the wind-up further back and the strike further forward than feels natural — that exaggeration IS the Darksiders energy",
+        task:"3-pose sword-strike sequence (wind-up, strike, follow-through) for the Knight captain or a brigand, exaggerated and bold rather than restrained."},
+      {key:"6.7", title:"Rolling hills and castle — your first scenery sketch", why:"This is the gap you flagged directly: characters you can build from shapes now, but scenery from scratch is still the harder problem. Camelot Hills' own world (rolling terrain, stone road, gatehouse, distant castle, bridge) is real, concrete practice ground.",
+        body:`<p>Scenery uses the exact same shape-first, silhouette-first logic as a character, just at a bigger scale. Block in 3 to 5 big shapes ONLY — a rolling hill line, a castle silhouette on the horizon, a road or bridge leading the eye toward it — before any detail. Depth comes from simple overlap: anything closer overlaps and is drawn darker/bolder, anything farther is lighter and simpler (this is called atmospheric perspective, and it's a shortcut, not a skill you need to already have).</p>`,
+        diagram:`<svg class="diagram" width="420" height="170" viewBox="0 0 420 170">
+          <path d="M 0 90 Q 100 60 210 85 Q 320 55 420 80 L 420 170 L 0 170 Z" fill="#2b2620" opacity="0.35"/>
+          <path d="M 0 115 Q 130 90 260 112 Q 350 95 420 110 L 420 170 L 0 170 Z" fill="#2b2620" opacity="0.6"/>
+          <rect x="255" y="55" width="8" height="24" fill="#2b2620" opacity="0.35"/>
+          <rect x="270" y="50" width="10" height="29" fill="#2b2620" opacity="0.35"/>
+          <path d="M 90 170 Q 130 140 150 115" fill="none" stroke="#2b2620" stroke-width="3" opacity="0.85"/>
+          <text x="270" y="35" font-size="10" fill="#6b6156" text-anchor="middle">castle — farthest, lightest, simplest</text>
+          <text x="150" y="160" font-size="10" fill="#a5502b" text-anchor="middle">road — nearest, darkest, boldest</text>
+        </svg>`,
+        caption:"Only 3-5 shapes, nothing else — nearest shape darkest and boldest, farthest shape lightest and simplest",
+        task:"5-minute thumbnail of a rolling-hills + distant-castle scene, 3-5 shapes only, nearest shape darkest/boldest, farthest lightest/simplest. Do 3 of these, varying only where the road or bridge leads the eye."},
+    ]
+  },
+];
+
+const TIPS = {
+  charcoal: [
+    {title:"Let one stroke carry the whole value range.", refs:["3.1"],
+     body:"Charcoal responds directly to pressure — light touch for a pale line, more weight for a dark one, all in a single unbroken stroke. Use this on your gesture lines (Module 3.1): start light for the wind-up, press harder through the fastest/heaviest part of the pose, so the line itself carries the energy instead of you drawing energy and value as two separate passes."},
+    {title:"Use the side of the stick for silhouette blocking, the tip for the one iconic feature.", refs:["2.2","2.3"],
+     body:"Lay the charcoal on its side to block in a whole creature's mass in seconds — this is the fastest way to run the silhouette test (Module 2.2). Switch to the sharp tip only for the single exaggerated feature (a claw, a hood edge) you want the eye to land on first (Module 2.3)."},
+    {title:"Treat the kneaded eraser as a second drawing tool, not a mistake-fixer.", refs:["2.3"],
+     body:"Pull it into a point and lift charcoal back out to carve a highlight or sharpen a silhouette edge after you've blocked in dark. This is the fastest way to push Module 2.3's 'exaggerate one feature' after the fact, without redrawing the whole shape from scratch."},
+  ],
+  pen: [
+    {title:"Draw the line of action from your shoulder, not your fingers — in one unbroken pass.", refs:["3.1"],
+     body:"Hesitant, finger-drawn lines come out shaky because they're actually many tiny corrected lines. Move your whole arm and commit to one confident stroke for gesture work (Module 3.1) — a slightly-off confident line reads better, and animates better, than a 'correct' hairy one."},
+    {title:"Build a line-weight hierarchy: thick on shadowed/underneath edges, thin on lit/top edges.", refs:["2.2"],
+     body:"Since you can't erase or blend, contrast has to come from line thickness alone. Thicker outer contour + thinner interior detail is exactly what makes a silhouette (Module 2.2) read as one solid shape instead of a flat outline — this is the same trick Jade Fist's chunky-outline art style uses."},
+    {title:"Change your grip position to match the pass: back of the pen for gesture, near the nib for the final render.", refs:["3.3","5.3"],
+     body:"Hold near the very end of the pen for loose, fast 30-second gestures and 5-minute thumbnail batches (Module 3.3, 5.3) where looseness matters more than accuracy. Choke up near the tip only once you've picked a winning thumbnail and are committing to the finished silhouette."},
+  ],
+  pencil: [
+    {title:"Run one pencil through a light → medium → heavy pressure ladder instead of switching pencils constantly.", refs:["1.1","3.1"],
+     body:"Light pressure for armatures and gesture (Module 1.1, 3.1) so mistakes cost nothing to redraw over; medium pressure once a pose is locked in for line refinement; heavy pressure only for the final committed contour on your chosen thumbnail (Module 5.3). This mirrors the exact light-to-dark sequence a construction sketch should follow."},
+    {title:"Match your grip distance to the stage: far back for loose gesture, choked up for detail.", refs:["3.3","5.3"],
+     body:"Holding the pencil near the end keeps your hand loose and prevents 'carving in' a wrong proportion too early — ideal for 5-minute gesture sessions and 5-thumbnail batches (Module 3.3, 5.3). Move your grip down near the tip only for the rendering pass on the one design you've already picked."},
+    {title:"Shade in small circular strokes with a slightly duller point for smooth value transitions.", refs:["2.2"],
+     body:"This is your existing strength, and it's exactly what makes the silhouette test (Module 2.2) and the final render of a Module 6 game assignment look intentional rather than sketchy — reserve it for the polishing pass, after construction and silhouette decisions are already locked in."},
+  ],
+};
+
+function lessonByKey(key){ return allLessons().find(l=>l.key===key); }
+
+function refBadges(refs){
+  return refs.map(k=>{
+    const l = lessonByKey(k);
+    if(!l) return '';
+    return `<button class="ref-badge" data-key="${k}">→ ${k} ${l.title}</button>`;
+  }).join(' ');
+}
+
+function renderTips(){
+  const mk = (title, arr) => `
+    <details class="tip-card">
+      <summary>${title} — top 3 pro tips</summary>
+      <div class="tip-body"><ol>
+        ${arr.map(t=>`<li><b>${t.title}</b><br>${t.body}<br>${refBadges(t.refs)}</li>`).join('')}
+      </ol></div>
+    </details>`;
+  return `<div class="tips">
+    <div class="tips-label">Technique — pick your medium</div>
+    ${mk('Charcoal', TIPS.charcoal)}
+    ${mk('Pen', TIPS.pen)}
+    ${mk('Pencil (graphite)', TIPS.pencil)}
+  </div>`;
+}
+
+function allTipsFlat(){
+  return Object.entries(TIPS).flatMap(([medium,arr])=>arr.map(t=>({...t, medium})));
+}
+
+function pickRandomTips(n){
+  const pool = allTipsFlat().slice();
+  const out = [];
+  while(pool.length && out.length<n){
+    out.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  }
+  return out;
+}
+
+function renderTipList(list){
+  const capMedium = m=> m==='pencil' ? 'Pencil (graphite)' : m.charAt(0).toUpperCase()+m.slice(1);
+  return `<ol>${list.map(t=>`<li><span class="medium-tag">${capMedium(t.medium)}</span><b>${t.title}</b><br>${t.body}<br>${refBadges(t.refs)}</li>`).join('')}</ol>`;
+}
+
+function renderGlossary(){
+  const main = document.getElementById('main');
+  const mk = (medium,label) => `
+    <div class="glossary-group">
+      <h3>${label}</h3>
+      ${TIPS[medium].map(t=>`
+        <div class="glossary-item">
+          <div class="glossary-title">${t.title}</div>
+          <div class="glossary-body">${t.body}</div>
+          <div class="glossary-refs">${refBadges(t.refs)}</div>
+        </div>`).join('')}
+    </div>`;
+  main.innerHTML = `
+    <div class="crumb">Reference</div>
+    <h2>Tip Glossary</h2>
+    <p style="line-height:1.6">Every pro tip from the lesson pages, in one place, linked back to the exercise it applies to.</p>
+    <div class="rowbtns" style="margin:16px 0 8px;flex-wrap:wrap">
+      <button class="ghost roll-btn" data-medium="charcoal">🎲 Random Charcoal Pick</button>
+      <button class="ghost roll-btn" data-medium="pen">🎲 Random Pen Pick</button>
+      <button class="ghost roll-btn" data-medium="pencil">🎲 Random Pencil Pick</button>
+    </div>
+    <div id="rollResult"></div>
+    ${mk('charcoal','Charcoal')}
+    ${mk('pen','Pen')}
+    ${mk('pencil','Pencil (graphite)')}
+  `;
+  document.querySelectorAll('.roll-btn').forEach(b=>{
+    b.onclick = ()=>{
+      const picks = pickRandomTips(3);
+      document.getElementById('rollResult').innerHTML = `
+        <div class="roll-box"><div class="tips-label">3 random picks</div>${renderTipList(picks)}</div>`;
+    };
+  });
+  document.querySelectorAll('.ref-badge').forEach(b=>{
+    b.onclick = ()=>{ current = b.dataset.key; view='lesson'; render(); };
+  });
+}
+
+const state = JSON.parse(localStorage.getItem('drawlab_state')||'{}');
+function save(){ localStorage.setItem('drawlab_state', JSON.stringify(state)); render(); }
+
+let current = null;
+let view = 'lesson';
+for(const m of MODULES){ if(m.lessons.length){ current = m.lessons[0].key; break; } }
+
+function allLessons(){ return MODULES.flatMap(m=>m.lessons.map(l=>({...l, mod:m.title}))); }
+
+const firstIncomplete = allLessons().find(l=>!(state[l.key]&&state[l.key].done));
+if(firstIncomplete) current = firstIncomplete.key;
+
+function renderNav(){
+  const nav = document.getElementById('modList');
+  nav.innerHTML = '';
+  const gBtn = document.createElement('button');
+  gBtn.className = 'lesson-btn glossary-btn' + (view==='glossary'?' active':'');
+  gBtn.innerHTML = `<span class="dot" style="visibility:hidden"></span> 📖 Tip Glossary`;
+  gBtn.onclick = ()=>{ view='glossary'; render(); };
+  nav.appendChild(gBtn);
+  for(const m of MODULES){
+    const head = document.createElement('div');
+    head.className = 'mod-head';
+    head.textContent = m.title;
+    nav.appendChild(head);
+    for(const l of m.lessons){
+      const btn = document.createElement('button');
+      const done = !!(state[l.key] && state[l.key].done);
+      btn.className = 'lesson-btn' + (l.key===current&&view==='lesson'?' active':'') + (done?' done':'');
+      const tierColor = TIER_COLOR[TIER_BY_MODULE[m.key]];
+      btn.innerHTML = `<span class="dot" style="${done?'':`border-color:${tierColor}`}"></span> ${l.key} ${l.title}`;
+      btn.onclick = ()=>{ current = l.key; view='lesson'; render(); };
+      nav.appendChild(btn);
+    }
+  }
+  const total = allLessons().length;
+  const doneCount = allLessons().filter(l=>state[l.key]&&state[l.key].done).length;
+  document.getElementById('barFill').style.width = (100*doneCount/total)+'%';
+  document.getElementById('barText').textContent = `${doneCount} / ${total} lessons complete`;
+
+  const mapWrap = document.getElementById('moduleMap');
+  mapWrap.innerHTML = MODULES.map(m=>{
+    const dc = m.lessons.filter(l=>state[l.key]&&state[l.key].done).length;
+    const pct = Math.round(100*dc/m.lessons.length);
+    return `<div class="mmap-row" title="${m.title}: ${dc}/${m.lessons.length}">
+      <div class="mmap-bar"><div class="mmap-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('streakText').textContent = streakLine();
+}
+
+function streakLine(){
+  const today = new Date().toISOString().slice(0,10);
+  const s = state.__streak || {count:0, last:null};
+  if(s.last === today){
+    return s.count<=1 ? "First session — welcome in" : `${s.count} day streak — nice`;
+  }
+  return s.count>0 ? `${s.count} day streak so far` : "Start today's session";
+}
+
+function touchStreak(){
+  const today = new Date().toISOString().slice(0,10);
+  const s = state.__streak || {count:0, last:null};
+  if(s.last===today) return;
+  const y = new Date(); y.setDate(y.getDate()-1);
+  const yStr = y.toISOString().slice(0,10);
+  s.count = (s.last===yStr) ? s.count+1 : 1;
+  s.last = today;
+  state.__streak = s;
+  localStorage.setItem('drawlab_state', JSON.stringify(state));
+}
+touchStreak();
+
+const REPS_BY_MODULE = {
+  m1: "Repeat this set across 2-3 short sessions rather than one long one — spaced-out reps beat one marathon session for making it stick.",
+  m2: "Repeat this set across 2-3 short sessions rather than one long one — spaced-out reps beat one marathon session for making it stick.",
+  m3: "Repeat until you can do it without pausing to think — that's the actual finish line for a gesture drill, not a fixed number of reps.",
+  m4: "Repeat until you can do it without pausing to think — that's the actual finish line for a gesture drill, not a fixed number of reps.",
+  m5: "This one's a one-off exercise, not a drill — but revisit it any time you're stuck on a new design.",
+  m6: "This one's a one-off assignment — but revisit it any time you're stuck on a new design.",
+};
+
+const TIER_BY_MODULE = { m1:"Foundational", m2:"Foundational", m3:"Building", m4:"Building", m5:"Stretch", m6:"Stretch" };
+const TIER_COLOR = { Foundational:"#5c7a4a", Building:"#a5502b", Stretch:"#8a3b8f" };
+
+const INTERLEAVE_BY_MODULE = {
+  m4: "Mix it in: before this rep, warm up with one 30-second gesture line (Module 3.1) first — interleaving an older skill with a new one cements both better than drilling this alone.",
+  m5: "Mix it in: warm up with one silhouette-fill test (Module 2.2) on your first thumbnail before you commit — bouncing between skills beats doing this one in isolation.",
+  m6: "Mix it in: this assignment leans on almost everything so far (Module 1 construction, Module 2 silhouette, Module 3/4 gesture and animation) — that blend IS the interleaving, which is exactly why these assignments come last.",
+};
+
+function successChecklist(){
+  return `<ul style="margin:6px 0 0;padding-left:20px;font-size:.87rem;line-height:1.6">
+    <li>Your construction lines are still faintly visible under the final marks — you didn't erase your reasoning</li>
+    <li>The silhouette test (solid black fill) still reads clearly as what you intended</li>
+    <li>You could point to the one feature you deliberately exaggerated or the one decision you made</li>
+  </ul>`;
+}
+
+function renderMain(){
+  const main = document.getElementById('main');
+  const all = allLessons();
+  const idx = all.findIndex(l=>l.key===current);
+  const l = all[idx];
+  const modKey = MODULES.find(m=>m.lessons.some(x=>x.key===l.key)).key;
+  const done = !!(state[l.key] && state[l.key].done);
+  const notes = (state[l.key] && state[l.key].notes) || '';
+  const prev = idx>0 ? all[idx-1] : null;
+  const tier = TIER_BY_MODULE[modKey];
+  const interleave = INTERLEAVE_BY_MODULE[modKey];
+  main.innerHTML = `
+    <div class="dot-track">${all.map(x=>{
+      const xdone = !!(state[x.key]&&state[x.key].done);
+      const cls = x.key===l.key ? 'dt current' : (xdone ? 'dt done' : 'dt');
+      return `<span class="${cls}" title="${x.key} ${x.title}" data-key="${x.key}"></span>`;
+    }).join('')}</div>
+    <div class="crumb">${l.mod} &nbsp;/&nbsp; Lesson ${l.key} &nbsp;
+      <span class="tier-badge" style="background:${TIER_COLOR[tier]}22;color:${TIER_COLOR[tier]}">${tier}</span>
+    </div>
+    <h2>${l.title}</h2>
+    ${prev ? `<span class="builds-on" id="buildsOnBtn">← builds on ${prev.key} ${prev.title}</span>` : ''}
+    <div class="why"><b>Why this matters for your games:</b> ${l.why}</div>
+    ${renderTips()}
+    <div class="body">${l.body||''}</div>
+    ${l.diagram||''}
+    ${l.diagram ? `<div class="step-caption">${l.caption || 'Construction order: rough placement → adjust proportions → commit line weight'}</div>` : ''}
+    <div class="task">
+      <h4>Your Task</h4>
+      <p style="margin:0">${l.task}</p>
+      <div class="reps-line">${REPS_BY_MODULE[modKey]}</div>
+      ${interleave ? `<div class="reps-line" style="color:var(--sub)">${interleave}</div>` : ''}
+      <div class="tips-label" style="margin-top:12px">What a passing rep looks like</div>
+      ${successChecklist()}
+      <textarea id="notesArea" placeholder="Notes on how it went, what felt hard, what you'd change next time...">${notes}</textarea>
+      <span class="saved-flash" id="savedFlash">saved</span>
+    </div>
+    <div class="task">
+      <h4>Your Drawings for This Lesson</h4>
+      <label class="upload-label" for="drawUpload">📷 Upload a photo of your drawing</label>
+      <input type="file" id="drawUpload" accept="image/*" multiple style="display:none">
+      <div class="gallery" id="gallery">${renderGallery(l.key)}</div>
+      <div class="key-note">Photos stay in this browser (localStorage). "AI Review" sends the photo + this lesson's task to the Anthropic API using your own key — set once, stored only in this browser. <button class="ref-badge" id="apiKeyBtn">${localStorage.getItem('drawlab_api_key')?'🔑 change API key':'🔑 set API key'}</button></div>
+    </div>
+    <div class="recall-box">Before marking this done: could you redo the task from memory, without re-reading the lesson above? That quick self-test locks it in far better than re-reading does.</div>
+    <div class="rowbtns">
+      <button class="primary" id="doneBtn">${done?'Mark Not Done':(idx===all.length-1?'Mark Done':'Done — Next Lesson →')}</button>
+      <button class="ghost" id="prevBtn" ${idx===0?'disabled':''}>← Previous</button>
+      <button class="ghost" id="nextBtn" ${idx===all.length-1?'disabled':''}>Next →</button>
+      <button class="ghost" id="shuffleBtn">🔀 Surprise me</button>
+    </div>
+    <div class="prompt-box">
+      <div class="p-line" id="promptLine">Need a quick warm-up instead? </div>
+      <div class="p-sub" id="promptSub"></div>
+      <button class="ghost" id="promptBtn" style="margin-top:10px">New Daily Prompt</button>
+    </div>
+  `;
+  document.querySelectorAll('.dt').forEach(d=>{
+    d.onclick = ()=>{ current = d.dataset.key; render(); };
+  });
+  if(prev){
+    document.getElementById('buildsOnBtn').onclick = ()=>{ current = prev.key; render(); };
+  }
+  document.getElementById('doneBtn').onclick = ()=>{
+    state[l.key] = state[l.key]||{};
+    const wasDone = done;
+    state[l.key].done = !done;
+    if(!wasDone){
+      showToast("Nice — logged for today");
+      if(idx<all.length-1){ current = all[idx+1].key; }
+    }
+    save();
+  };
+  document.getElementById('shuffleBtn').onclick = ()=>{
+    const incomplete = all.filter(x=>!(state[x.key]&&state[x.key].done) && x.key!==current);
+    const pool = incomplete.length ? incomplete : all.filter(x=>x.key!==current);
+    if(pool.length){ current = pool[Math.floor(Math.random()*pool.length)].key; render(); }
+  };
+  let notesTimer = null;
+  document.getElementById('notesArea').oninput = (e)=>{
+    clearTimeout(notesTimer);
+    const val = e.target.value;
+    notesTimer = setTimeout(()=>{
+      state[l.key] = state[l.key]||{};
+      state[l.key].notes = val;
+      localStorage.setItem('drawlab_state', JSON.stringify(state));
+      const flash = document.getElementById('savedFlash');
+      if(flash){ flash.classList.add('show'); setTimeout(()=>flash.classList.remove('show'), 1200); }
+    }, 500);
+  };
+  document.getElementById('prevBtn').onclick = ()=>{ current = all[idx-1].key; render(); };
+  document.getElementById('nextBtn').onclick = ()=>{ current = all[idx+1].key; render(); };
+  document.getElementById('promptBtn').onclick = showPrompt;
+  document.querySelectorAll('.ref-badge').forEach(b=>{
+    if(!b.dataset.key) return;
+    b.onclick = ()=>{ current = b.dataset.key; view='lesson'; render(); };
+  });
+  wireGallery(l.key);
+}
+
+// ---------- Drawing uploads + AI review ----------
+function getImages(key){ return (state[key] && state[key].images) || []; }
+
+function esc(s){ return String(s).replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+function renderGallery(lessonKey){
+  const imgs = getImages(lessonKey);
+  if(!imgs.length) return '<div class="key-note">No drawings uploaded yet — snap a photo of your sketchbook page when you finish the task.</div>';
+  return imgs.map((im,i)=>`
+    <div class="gal-item" data-i="${i}">
+      <img src="${im.src}" alt="drawing ${i+1}">
+      <div class="gal-btns">
+        <button class="ghost review-btn" data-i="${i}">🎨 AI Review</button>
+        <button class="ghost del-btn" data-i="${i}">🗑</button>
+      </div>
+      ${im.review ? `<div class="review-box">${esc(im.review)}</div>` : ''}
+    </div>`).join('');
+}
+
+function wireGallery(lessonKey){
+  const keyBtn = document.getElementById('apiKeyBtn');
+  if(keyBtn) keyBtn.onclick = ()=>{
+    const k = window.prompt('Paste your Anthropic API key (sk-ant-...). It is stored only in this browser and only sent to api.anthropic.com:', localStorage.getItem('drawlab_api_key')||'');
+    if(k===null) return;
+    if(k.trim()) localStorage.setItem('drawlab_api_key', k.trim()); else localStorage.removeItem('drawlab_api_key');
+    render();
+  };
+  const up = document.getElementById('drawUpload');
+  if(up) up.onchange = async (e)=>{
+    for(const f of [...e.target.files]){
+      try{
+        const src = await resizeImage(f);
+        state[lessonKey] = state[lessonKey]||{};
+        (state[lessonKey].images = state[lessonKey].images||[]).push({src, review:null});
+      }catch(_){ showToast('Could not read that image'); }
+    }
+    try{ save(); }catch(_){ showToast('Browser storage is full — delete some older uploads first'); render(); }
+  };
+  document.querySelectorAll('#gallery img').forEach(img=>{
+    img.onclick = ()=> img.closest('.gal-item').classList.toggle('expanded');
+  });
+  document.querySelectorAll('#gallery .del-btn').forEach(b=>{
+    b.onclick = ()=>{
+      getImages(lessonKey).splice(+b.dataset.i, 1);
+      save();
+    };
+  });
+  document.querySelectorAll('#gallery .review-btn').forEach(b=>{
+    b.onclick = ()=> aiReview(lessonKey, +b.dataset.i, b);
+  });
+}
+
+function resizeImage(file){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const max = 1000;
+      const s = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src);
+      resolve(c.toDataURL('image/jpeg', 0.78));
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+async function aiReview(lessonKey, i, btn){
+  let apiKey = localStorage.getItem('drawlab_api_key');
+  if(!apiKey){
+    apiKey = window.prompt('Paste your Anthropic API key (sk-ant-...). Stored only in this browser:');
+    if(!apiKey || !apiKey.trim()){ showToast('No API key — review cancelled'); return; }
+    apiKey = apiKey.trim();
+    localStorage.setItem('drawlab_api_key', apiKey);
+  }
+  const l = lessonByKey(lessonKey);
+  const im = getImages(lessonKey)[i];
+  if(!im) return;
+  btn.disabled = true; btn.textContent = 'Reviewing…';
+  try{
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-8',
+        max_tokens: 1024,
+        system: "You are a warm, honest drawing coach reviewing a beginner game artist's practice work from a shape-first, silhouette-first fundamentals course. The student is already strong at careful pencil/charcoal shading and copying from reference; the course is building his confidence at designing from scratch. Judge the drawing against the specific task, not against professional polish.",
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: im.src.split(',')[1] } },
+            { type: 'text', text: `This is my attempt at Lesson ${l.key} "${l.title}".\nThe task was: ${l.task}\n\nReview it in plain text, under 180 words:\n1. What's working\n2. The single most useful thing to change on my next rep\n3. Verdict: does this pass the task as written?` }
+          ]
+        }]
+      })
+    });
+    if(!resp.ok){
+      const e = await resp.json().catch(()=>({}));
+      const msg = (e.error && e.error.message) || ('HTTP ' + resp.status);
+      if(resp.status === 401){ localStorage.removeItem('drawlab_api_key'); showToast('API key rejected — it was cleared, set it again'); }
+      throw new Error(msg);
+    }
+    const data = await resp.json();
+    const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim() || '(no text returned)';
+    im.review = text;
+    save();
+  }catch(err){
+    if(!String(err.message).includes('rejected')) showToast('Review failed: ' + err.message);
+    btn.disabled = false; btn.textContent = '🎨 AI Review';
+  }
+}
+
+const SKILLS = ["30-second gesture", "silhouette-fill test", "squash & stretch", "3-frame walk cycle", "two-reference merge", "one iconic feature exaggeration"];
+function showPrompt(){
+  const g = GAMES[Math.floor(Math.random()*GAMES.length)];
+  const s = SKILLS[Math.floor(Math.random()*SKILLS.length)];
+  document.getElementById('promptLine').textContent = `Today: ${s} — ${g.name}'s ${g.subject}`;
+  document.getElementById('promptSub').textContent = g.note;
+}
+
+function render(){ renderNav(); if(view==='glossary'){ renderGlossary(); } else { renderMain(); } }
+render();
+
+function showToast(msg){
+  let t = document.getElementById('toast');
+  if(!t){ t = document.createElement('div'); t.id='toast'; t.className='toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+document.addEventListener('keydown', (e)=>{
+  if(view!=='lesson') return;
+  const tag = (e.target.tagName||'').toLowerCase();
+  if(tag==='textarea' || tag==='input') return;
+  const all = allLessons();
+  const idx = all.findIndex(x=>x.key===current);
+  if(e.key==='ArrowRight' && idx<all.length-1){ current = all[idx+1].key; render(); }
+  else if(e.key==='ArrowLeft' && idx>0){ current = all[idx-1].key; render(); }
+  else if(e.key.toLowerCase()==='d'){ const btn=document.getElementById('doneBtn'); if(btn) btn.click(); }
+});
+</script>
