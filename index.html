@@ -118,6 +118,27 @@
     background:var(--ink);color:#fffdfa;padding:10px 20px;border-radius:20px;font-size:.85rem;
     opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:50}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  /* Result card popup — surfaces AI review in-viewport so mobile users never scroll to the bottom to read the verdict */
+  .rcard-back{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;
+    padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom));background:rgba(43,38,32,.5);
+    opacity:0;transition:opacity .2s}
+  .rcard-back.show{opacity:1}
+  .rcard{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px;
+    width:min(520px,100%);max-height:min(82vh,660px);display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 18px 50px rgba(43,38,32,.32);transform:translateY(12px);transition:transform .2s}
+  .rcard-back.show .rcard{transform:translateY(0)}
+  .rcard-head{display:flex;align-items:flex-start;gap:12px;padding:16px 18px 12px;border-bottom:1px solid var(--line)}
+  .rcard-head .rc-eyebrow{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin:0 0 3px}
+  .rcard-head .rc-title{font-size:1.05rem;font-weight:bold;margin:0;line-height:1.3}
+  .rc-close{background:none;border:1px solid var(--line);border-radius:8px;font-size:.95rem;line-height:1;
+    padding:7px 11px;cursor:pointer;color:var(--sub);font-family:inherit;flex:0 0 auto}
+  .rc-verdict{display:inline-block;margin:0 0 10px;padding:4px 13px;border-radius:20px;font-size:.8rem;font-weight:bold}
+  .rc-verdict.pass{background:#e6efe0;color:var(--done)}
+  .rc-verdict.work{background:var(--accent-soft);color:var(--accent)}
+  .rcard-body{padding:14px 18px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .rcard-body .rc-text{font-size:.92rem;line-height:1.6;white-space:pre-wrap}
+  .rcard-foot{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+  @media (prefers-reduced-motion:reduce){.rcard-back,.rcard{transition:none}}
   svg.diagram{max-width:100%;height:auto}
   .mobilebar{display:none}
   .drawer-overlay{display:none}
@@ -1191,6 +1212,7 @@ async function aiReview(lessonKey, i, btn){
     const text = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n').trim() || '(no text returned)';
     im.review = text;
     save();
+    showResultCard(l, text);
   }catch(err){
     if(!String(err.message).includes('rejected')) showToast('Review failed: ' + err.message);
     btn.disabled = false; btn.textContent = '🎨 AI Review';
@@ -1235,6 +1257,7 @@ async function aiReviewViaCoach(lessonKey, i, btn){
     im.review = data.review || '(no text returned)';
     if(typeof data.remaining === 'number' && data.remaining <= 20) showToast(`${data.remaining} reviews left on this code`);
     save();
+    showResultCard(l, im.review);
   }catch(err){
     showToast('Review failed: ' + err.message + ' (the coach may be waking up — try again in a minute)');
     btn.disabled = false; btn.textContent = '🎨 AI Review';
@@ -1266,6 +1289,51 @@ function showToast(msg){
   t.classList.add('show');
   clearTimeout(showToast._t);
   showToast._t = setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+// Read a pass / keep-going verdict out of the review text. Returns null when unsure
+// so we never show a wrong badge — the full text below always carries the real answer.
+function detectVerdict(t){
+  const m = /verdict[:\s-]*([\s\S]{0,90})/i.exec(t);
+  const s = (m ? m[1] : String(t).slice(-100)).toLowerCase();
+  if(/\b(not yet|does ?n'?t pass|does not pass|not quite|not there|almost|keep going|no,)\b/.test(s)) return 'work';
+  if(/\b(passes|passed|yes|clears the task|nailed|success|solid pass)\b/.test(s)) return 'pass';
+  return null;
+}
+
+// Pop the AI review as a dismissible in-viewport card. On mobile the review used to
+// render only in the gallery at the bottom of a long lesson, forcing a scroll hunt to
+// read the verdict; the card puts success/failure right where the eyes already are.
+function showResultCard(l, text){
+  document.querySelectorAll('.rcard-back').forEach(x=>x.remove());
+  const v = detectVerdict(text);
+  const chip = v==='pass' ? '<span class="rc-verdict pass">✓ Passes the task</span>'
+             : v==='work' ? '<span class="rc-verdict work">Keep going — one more rep</span>' : '';
+  const back = document.createElement('div');
+  back.className = 'rcard-back';
+  back.innerHTML = `<div class="rcard" role="dialog" aria-modal="true" aria-label="AI review">
+      <div class="rcard-head">
+        <div style="flex:1">
+          <p class="rc-eyebrow">AI Review · Lesson ${esc(l.key)}</p>
+          <p class="rc-title">${esc(l.title)}</p>
+        </div>
+        <button class="rc-close" aria-label="Close">✕</button>
+      </div>
+      <div class="rcard-body">${chip}<div class="rc-text">${esc(text)}</div></div>
+      <div class="rcard-foot">
+        <button class="ghost rc-gallery">See it with my drawing ↓</button>
+        <button class="primary rc-done">Got it</button>
+      </div>
+    </div>`;
+  document.body.appendChild(back);
+  const onKey = e=>{ if(e.key==='Escape') close(); };
+  function close(){ back.classList.remove('show'); setTimeout(()=>back.remove(),200); document.removeEventListener('keydown',onKey); }
+  back.querySelector('.rc-close').onclick = close;
+  back.querySelector('.rc-done').onclick = close;
+  back.querySelector('.rc-gallery').onclick = ()=>{ close(); const g=document.getElementById('gallery'); if(g) g.scrollIntoView({behavior:'smooth',block:'center'}); };
+  back.onclick = e=>{ if(e.target===back) close(); };
+  document.addEventListener('keydown', onKey);
+  requestAnimationFrame(()=>back.classList.add('show'));
 }
 
 document.addEventListener('keydown', (e)=>{
