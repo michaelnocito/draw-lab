@@ -188,6 +188,7 @@ const GAMES = [
   {name:"Rooftop Sprint", subject:"rooftop runner", note:"auto-runner silhouette, jump/slide poses"},
   {name:"Flipline", subject:"one-button runner character", note:"simple bouncing/flipping silhouette"},
   {name:"Camelot Hills", subject:"hooded Rogue Heretic / Knight / Barbarian brigand", note:"bold Darksiders-stylized 3D combat cast; sword or flail in hand"},
+  {name:"SQL Trail", subject:"frontier townsfolk & covered wagon", note:"charcoal Western: sheriff/trader/doctor/undertaker, covered wagon, mountain trail, sheriff-star & bullet-hole icons"},
 ];
 
 const MODULES = [
@@ -549,6 +550,204 @@ const MODULES = [
         task:"5-minute thumbnail of a rolling-hills + distant-castle scene, 3-5 shapes only, nearest shape darkest/boldest, farthest lightest/simplest. Do 3 of these, varying only where the road or bridge leads the eye."},
     ]
   },
+  {
+    key:"m7", title:"SQL Trail — Draw the Frontier",
+    lessons:[
+      {key:"7.1", title:"Townsfolk — a frontier cast that reads by silhouette", why:"SQL Trail's towns are run by the folks who hand out jobs: a sheriff, a trader, a doctor, an undertaker. The player meets each one small and fast, so like your Deadroot enemies they have to read from the silhouette alone (Module 2). This is a real commission: draw them in charcoal on toned paper the way you drew the Lake Scene, and they scan straight into the game.",
+        body:`<p>Build every townsperson on the same Module 1 armature and the same height, then hang <b>one</b> silhouette-defining feature on each (Module 2.3): the sheriff gets a wide flat brim and a star, the trader an apron and a crate, the doctor a bowler and a bag, the undertaker a tall stovepipe and a long coat.</p>
+        <p>Keeping the bodies identical and changing only the hat and one prop is what makes them read as one cast instead of four unrelated figures. Silhouette-fill each one (Module 2.2): if you cannot name it as a black shape, push the hat bigger.</p>`,
+        diagram:`<svg class="diagram" width="500" height="192" viewBox="0 0 500 192">
+          <g fill="#2b2620">
+            <path d="M54 170 Q52 110 70 100 Q88 110 86 170 Z"/>
+            <circle cx="70" cy="84" r="11"/>
+            <rect x="61" y="66" width="18" height="13" rx="2"/>
+            <ellipse cx="70" cy="68" rx="29" ry="4.5"/>
+          </g>
+          <polygon points="70,111 71.12,114.46 74.76,114.46 71.82,116.59 72.94,120.05 70,117.91 67.06,120.05 68.18,116.59 65.24,114.46 68.88,114.46" fill="#a5502b"/>
+          <text x="70" y="188" font-size="10.5" fill="#6b6156" text-anchor="middle">Sheriff: brim + star</text>
+          <g fill="#2b2620">
+            <path d="M174 170 Q172 112 190 102 Q208 112 206 170 Z"/>
+            <circle cx="190" cy="86" r="11"/>
+            <path d="M177 76 h26 l-4 -9 h-18 z"/>
+          </g>
+          <rect x="176" y="122" width="28" height="22" rx="2" fill="#a5502b"/>
+          <line x1="176" y1="133" x2="204" y2="133" stroke="#2b2620" stroke-width="1.4"/>
+          <line x1="190" y1="122" x2="190" y2="144" stroke="#2b2620" stroke-width="1.4"/>
+          <text x="190" y="188" font-size="10.5" fill="#6b6156" text-anchor="middle">Trader: apron + crate</text>
+          <g fill="#2b2620">
+            <path d="M294 170 Q292 112 310 102 Q328 112 326 170 Z"/>
+            <circle cx="310" cy="86" r="11"/>
+            <ellipse cx="310" cy="76" rx="15" ry="3.5"/>
+            <path d="M300 76 q10 -15 20 0 z"/>
+          </g>
+          <path d="M326 130 q9 -5 18 0 v15 h-18 z" fill="#a5502b"/>
+          <rect x="331" y="126" width="8" height="5" fill="#a5502b"/>
+          <text x="310" y="188" font-size="10.5" fill="#6b6156" text-anchor="middle">Doctor: bowler + bag</text>
+          <g fill="#2b2620">
+            <path d="M414 170 Q412 106 430 96 Q448 106 446 170 Z"/>
+            <circle cx="430" cy="80" r="11"/>
+            <ellipse cx="430" cy="70" rx="16" ry="3.5"/>
+            <rect x="422" y="44" width="16" height="26" rx="1.5"/>
+          </g>
+          <text x="430" y="188" font-size="10.5" fill="#6b6156" text-anchor="middle">Undertaker: stovepipe + coat</text>
+          <line x1="20" y1="171" x2="480" y2="171" stroke="#ddd3c4" stroke-width="1"/>
+        </svg>`,
+        caption:"Same body, different hat plus one prop: that is all a frontier archetype needs to read",
+        task:"Draw 4 townsfolk (sheriff, trader, doctor, undertaker) at the same height, each identifiable by hat and one prop alone. Silhouette-fill test every one, then render in charcoal."},
+      {key:"7.2", title:"The covered wagon — a 3/4 side profile", why:"The covered wagon is on screen more than anything else in SQL Trail: it is the travel scene and the game's mascot. Right now it is flat vector art. A clean charcoal wagon at a 3/4 side view can drop straight into that scene in your own hand.",
+        body:`<p>Shape first (Module 1): a big cylinder for the canvas bonnet, a box for the bed, two ellipse wheels. Turn it slightly to 3/4 by drawing the far wheel a little smaller and a little higher than the near one, which reads as depth.</p>
+        <p>The bonnet arch is the wagon's version of the völva's hood: it is the one curve the eye locks onto, so get that arch right and everything else is trim. Silhouette-fill to confirm the black shape still says "covered wagon".</p>`,
+        diagram:`<svg class="diagram" width="470" height="196" viewBox="0 0 470 196">
+          <text x="115" y="20" font-size="11" fill="#6b6156" text-anchor="middle">1. construction: cylinder + box + 2 wheels</text>
+          <g fill="none" stroke="#a5502b" stroke-width="1.6" stroke-dasharray="4 3">
+            <rect x="60" y="120" width="106" height="26" rx="2"/>
+            <path d="M60 122 Q113 70 166 122"/>
+            <ellipse cx="113" cy="122" rx="53" ry="9"/>
+            <circle cx="86" cy="152" r="17"/>
+            <circle cx="146" cy="148" r="13"/>
+          </g>
+          <text x="206" y="150" font-size="9.5" fill="#a5502b">far wheel:</text>
+          <text x="206" y="162" font-size="9.5" fill="#a5502b">smaller + higher</text>
+          <path d="M204 150 L168 149" stroke="#a5502b" stroke-width="1" marker-end="url(#awag)"/>
+          <text x="360" y="20" font-size="11" fill="#a5502b" text-anchor="middle">2. silhouette: the bonnet arch is the signature</text>
+          <g fill="#2b2620">
+            <path d="M300 120 Q353 66 406 120 Z"/>
+            <rect x="300" y="116" width="106" height="26" rx="2"/>
+            <circle cx="326" cy="150" r="15"/>
+            <circle cx="384" cy="147" r="12"/>
+          </g>
+          <line x1="30" y1="176" x2="440" y2="176" stroke="#ddd3c4" stroke-width="1"/>
+          <defs><marker id="awag" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#a5502b"/></marker></defs>
+        </svg>`,
+        caption:"The bonnet arch is the wagon's signature: nail that curve and the rest is detail",
+        task:"Draw the covered wagon in 3/4 side view: construction first (bonnet cylinder, bed box, near and far wheels), then a charcoal render. Silhouette-check the result."},
+      {key:"7.3", title:"Rolling wheels and dust — the wagon in motion", why:"In the travel scene the wagon rolls across a mountain backdrop while the wheels spin and dust kicks up behind it. The engine animates those pieces separately, so you will draw them as their own elements: a wheel that reads while spinning, and a puff of trail dust.",
+        body:`<p>Draw the wheel as a clean circle with even spokes so it still reads as a wheel when it is a blur (a couple of faint ghost circles sell the spin). The dust is pure squash and stretch (Module 4.1): a round puff nearest the wheel that stretches longer and fades lighter as it trails.</p>
+        <p>If you want the full rig, rough the ox team in front with blob construction (Module 1.3), overlapping ovals leaning into the pull.</p>`,
+        diagram:`<svg class="diagram" width="440" height="160" viewBox="0 0 440 160">
+          <circle cx="82" cy="90" r="28" fill="none" stroke="#2b2620" stroke-width="1" opacity=".25"/>
+          <circle cx="98" cy="90" r="28" fill="none" stroke="#2b2620" stroke-width="1" opacity=".25"/>
+          <circle cx="90" cy="90" r="28" fill="none" stroke="#2b2620" stroke-width="2.4"/>
+          <circle cx="90" cy="90" r="5" fill="#2b2620"/>
+          <g stroke="#2b2620" stroke-width="1.4">
+            <line x1="90" y1="62" x2="90" y2="118"/>
+            <line x1="62" y1="90" x2="118" y2="90"/>
+            <line x1="70" y1="70" x2="110" y2="110"/>
+            <line x1="110" y1="70" x2="70" y2="110"/>
+          </g>
+          <text x="90" y="140" font-size="10" fill="#6b6156" text-anchor="middle">clean spokes read even when spun</text>
+          <ellipse cx="250" cy="100" rx="15" ry="14" fill="#2b2620" opacity=".7"/>
+          <ellipse cx="320" cy="98" rx="26" ry="11" fill="#2b2620" opacity=".45"/>
+          <ellipse cx="392" cy="95" rx="34" ry="8" fill="#2b2620" opacity=".2"/>
+          <text x="250" y="138" font-size="10" fill="#6b6156" text-anchor="middle">round</text>
+          <text x="320" y="138" font-size="10" fill="#a5502b" text-anchor="middle">stretched</text>
+          <text x="392" y="138" font-size="10" fill="#6b6156" text-anchor="middle">fading</text>
+        </svg>`,
+        caption:"Dust is squash and stretch: a round puff that stretches out and fades as it trails behind",
+        task:"Draw a spoked wheel plus a 3-stage dust trail (round, stretched, dissipating). Optional: a simple ox in blob construction leaning into the pull."},
+      {key:"7.4", title:"The mountain-trail backdrop — your Lake Scene, gone West", why:"This is the scene behind the rolling wagon: layered mountains, a wide sky, a trail running to the horizon. It is the same composition as your Lake Scene (misty ridges, a path receding to a vanishing point), so you have already proven you can carry it in charcoal. This one piece sets the mood for the whole trail.",
+        body:`<p>Scenery is the same shape-first logic as a character, just bigger (Module 6.7). Block 3 to 5 big shapes only: two or three ridge lines, a wide sky, and the trail. Use atmospheric perspective, which is a shortcut and not a talent you need to already have: the farthest ridge is lightest and softest, the nearest hill is darkest and boldest.</p>
+        <p>Leave the sky large and soft, because that is where the mood lives, and lift your misty ridge lines back out with the kneaded eraser exactly like you did on the lake water. The trail is your road that leads the eye, the same job the railroad tracks do in the Lake Scene.</p>`,
+        diagram:`<svg class="diagram" width="470" height="190" viewBox="0 0 470 190">
+          <circle cx="360" cy="48" r="20" fill="#a5502b" opacity=".18"/>
+          <path d="M0 78 L70 54 L130 74 L200 48 L280 72 L350 52 L430 74 L470 60 V190 H0 Z" fill="#2b2620" opacity=".22"/>
+          <path d="M0 104 L90 84 L170 106 L250 82 L340 108 L430 90 L470 104 V190 H0 Z" fill="#2b2620" opacity=".42"/>
+          <path d="M0 132 Q120 116 240 134 T470 130 V190 H0 Z" fill="#2b2620" opacity=".7"/>
+          <path d="M212 132 L150 190 M258 132 L330 190" stroke="#a5502b" stroke-width="2.5" fill="none" opacity=".8"/>
+          <line x1="212" y1="132" x2="258" y2="132" stroke="#a5502b" stroke-width="1" opacity=".5"/>
+          <text x="235" y="38" font-size="10" fill="#6b6156" text-anchor="middle">sky stays big and soft, the mood lives here</text>
+          <text x="66" y="70" font-size="9.5" fill="#6b6156">lightest, softest, farthest</text>
+          <text x="240" y="183" font-size="10" fill="#a5502b" text-anchor="middle">the trail leads the eye to the horizon</text>
+        </svg>`,
+        caption:"Same as the Lake Scene: soft light ridges far, one dark bold hill near, a single path pulling the eye to the horizon",
+        task:"5-minute charcoal thumbnail of a western trail: 3 mountain layers (lightest farthest), a big soft sky, a trail receding to the horizon. Then take one to a fuller render leaning on your Lake Scene tonal control."},
+      {key:"7.5", title:"Frontier props — the set dressing", why:"The towns and trail need the western set dressing that sells the period: a cactus, an ox skull, a barrel, a lantern, a coffee pot. Each is tiny, but together they are what makes a screen read as the frontier. Several of these also reskin the practice-table items already in the game.",
+        body:`<p>Every prop is one or two Module 1 primitives plus one telling detail: the cactus is stacked cylinders, the barrel a cylinder with banding, the skull a sphere with horns, the lantern a box with a handle. Nothing here needs to be complicated.</p>
+        <p>Silhouette-fill each prop (Module 2.2) and check it at thumbnail size, because these live small on screen and have to read instantly.</p>`,
+        diagram:`<svg class="diagram" width="500" height="168" viewBox="0 0 500 168">
+          <g stroke="#2b2620" stroke-width="9" stroke-linecap="round" fill="none">
+            <line x1="70" y1="150" x2="70" y2="92"/>
+            <path d="M70 118 Q56 118 56 104"/>
+            <path d="M70 126 Q84 126 84 110"/>
+          </g>
+          <path d="M150 100 Q165 96 180 100 L177 148 Q165 152 153 148 Z" fill="#2b2620"/>
+          <line x1="151" y1="115" x2="179" y2="115" stroke="#fff" stroke-width="2.5"/>
+          <line x1="152" y1="134" x2="178" y2="134" stroke="#fff" stroke-width="2.5"/>
+          <circle cx="262" cy="118" r="18" fill="#2b2620"/>
+          <path d="M250 108 Q232 96 224 104 Q236 104 246 116 Z" fill="#2b2620"/>
+          <path d="M274 108 Q292 96 300 104 Q288 104 278 116 Z" fill="#2b2620"/>
+          <path d="M255 128 Q262 150 269 128 Z" fill="#2b2620"/>
+          <circle cx="255" cy="116" r="3" fill="#fff"/><circle cx="269" cy="116" r="3" fill="#fff"/>
+          <rect x="349" y="106" width="18" height="30" rx="2" fill="#2b2620"/>
+          <rect x="346" y="102" width="24" height="6" rx="2" fill="#2b2620"/>
+          <rect x="346" y="134" width="24" height="6" rx="2" fill="#2b2620"/>
+          <path d="M352 102 Q358 92 364 102" fill="none" stroke="#2b2620" stroke-width="2"/>
+          <path d="M355 130 l3 -14 l3 14 z" fill="#a5502b"/>
+          <path d="M440 110 h22 v22 q0 6 -6 6 h-10 q-6 0 -6 -6 z" fill="#2b2620"/>
+          <path d="M440 116 l-8 6 l8 4 z" fill="#2b2620"/>
+          <path d="M462 116 q10 2 6 14" fill="none" stroke="#2b2620" stroke-width="3"/>
+          <path d="M446 110 h12 l-3 -6 h-6 z" fill="#2b2620"/>
+          <circle cx="452" cy="102" r="2.5" fill="#2b2620"/>
+          <line x1="20" y1="152" x2="480" y2="152" stroke="#ddd3c4" stroke-width="1"/>
+          <text x="70" y="164" font-size="10" fill="#6b6156" text-anchor="middle">cactus</text>
+          <text x="165" y="164" font-size="10" fill="#6b6156" text-anchor="middle">barrel</text>
+          <text x="262" y="164" font-size="10" fill="#6b6156" text-anchor="middle">ox skull</text>
+          <text x="358" y="164" font-size="10" fill="#6b6156" text-anchor="middle">lantern</text>
+          <text x="452" y="164" font-size="10" fill="#6b6156" text-anchor="middle">coffee pot</text>
+        </svg>`,
+        caption:"Each prop is one or two primitives plus one detail that names it: test every one at thumbnail size",
+        task:"Draw 6 frontier props from primitives (cactus, barrel, ox skull, lantern, coffee pot, crate), each silhouette-checked at small size."},
+      {key:"7.6", title:"The trail path — a progress map, Western style", why:"SQL Trail shows your town-to-town progress as a path, the same idea as a Duolingo lesson map. Redrawn in charcoal with western stops (a wagon wheel, a river crossing, a fort, a boot-hill marker) it stops being generic UI and becomes signature art.",
+        body:`<p>Design the path before the stops. Draw the trail as one long line of action (Module 3.1) snaking across the page, then place the nodes as evenly spaced beats along it. Each node is a small icon inside a badge frame.</p>
+        <p>Keep every badge the same frame shape and size, because that consistency is what lets the three states read at a glance: done, current (you are here), and locked-ahead. This is the same discipline as the 6.5 turnaround, held across nodes instead of angles. Connect them with a dashed trail or a line of footprints.</p>`,
+        diagram:`<svg class="diagram" width="480" height="200" viewBox="0 0 480 200">
+          <path d="M40 160 Q90 110 140 84 Q195 120 240 150 Q295 110 340 74 Q395 110 440 140" fill="none" stroke="#a5502b" stroke-width="2.5" stroke-dasharray="2 7" stroke-linecap="round"/>
+          <circle cx="40" cy="160" r="16" fill="#5c7a4a" stroke="#2b2620" stroke-width="1.5"/>
+          <circle cx="40" cy="160" r="8" fill="none" stroke="#fff" stroke-width="1.4"/>
+          <path d="M40 152 V168 M32 160 H48" stroke="#fff" stroke-width="1.2"/>
+          <circle cx="140" cy="84" r="16" fill="#5c7a4a" stroke="#2b2620" stroke-width="1.5"/>
+          <path d="M132 80 q4 -4 8 0 t8 0 M132 88 q4 -4 8 0 t8 0" fill="none" stroke="#fff" stroke-width="1.4"/>
+          <circle cx="240" cy="150" r="21" fill="none" stroke="#a5502b" stroke-width="1.5" opacity=".5"/>
+          <circle cx="240" cy="150" r="16" fill="#f0e0d0" stroke="#a5502b" stroke-width="3"/>
+          <path d="M231 158 V147 h2.5 v-3 h3 v3 h3 v-3 h3 v3 h2.5 v11 z" fill="#a5502b"/>
+          <text x="240" y="185" font-size="10" fill="#a5502b" text-anchor="middle">you are here</text>
+          <circle cx="340" cy="74" r="16" fill="#ddd3c4" stroke="#6b6156" stroke-width="1.5"/>
+          <path d="M340 64 V84 M333 70 H347" stroke="#6b6156" stroke-width="2"/>
+          <circle cx="440" cy="140" r="16" fill="#ddd3c4" stroke="#6b6156" stroke-width="1.5"/>
+          <polygon points="440,131 442.02,137.22 448.56,137.22 443.27,141.06 445.29,147.28 440,143.44 434.71,147.28 436.73,141.06 431.44,137.22 437.98,137.22" fill="#6b6156"/>
+          <text x="120" y="28" font-size="10" fill="#6b6156" text-anchor="middle">one snaking trail line first, then evenly spaced node badges</text>
+        </svg>`,
+        caption:"One snaking trail line first, then evenly spaced node badges: a consistent badge shape is what makes done, now, and locked read",
+        task:"Design a 5-stop western progress trail: a snaking path with 5 node badges (varied western icons) and a clear 'you are here' marker. Keep every badge frame identical."},
+      {key:"7.7", title:"Sheriff badges and bullet holes — iconography, get creative", why:"These are the small stamps that carry the whole theme: a sheriff's star for reward and current stops, and bullet holes for miss states, worn edges, and the aged wanted-poster look the game already uses. You will reuse both everywhere, so it is worth drilling them clean. Get creative here.",
+        body:`<p>The star is geometry, not guesswork: draw a light construction circle, step 5 points evenly around it, and connect through. A small ball on each point tip and a disc in the center make it read as a badge rather than a plain star.</p>
+        <p>A bullet hole reads as a hole, not a dot, through value (your strength): a dark irregular core, a torn light rim splintering outward, and a small highlight on one side for depth. Draw a few sizes. Then get creative: a badge with a bullet dented clean through it tells a whole story in one icon.</p>`,
+        diagram:`<svg class="diagram" width="480" height="206" viewBox="0 0 480 206">
+          <circle cx="90" cy="100" r="42" fill="none" stroke="#a5502b" stroke-width="1.2" stroke-dasharray="4 4"/>
+          <polygon points="90,58 99.43,87.02 129.94,87.02 105.25,104.96 114.7,133.98 90,116.04 65.3,133.98 74.75,104.96 50.06,87.02 80.57,87.02" fill="#2b2620"/>
+          <g fill="#2b2620">
+            <circle cx="90" cy="58" r="4"/><circle cx="129.94" cy="87.02" r="4"/><circle cx="114.7" cy="133.98" r="4"/><circle cx="65.3" cy="133.98" r="4"/><circle cx="50.06" cy="87.02" r="4"/>
+          </g>
+          <circle cx="90" cy="100" r="6" fill="#fff" stroke="#2b2620" stroke-width="1"/>
+          <text x="90" y="165" font-size="10" fill="#a5502b" text-anchor="middle">5 points stepped evenly on a circle</text>
+          <circle cx="250" cy="72" r="9" fill="#2b2620"/>
+          <path d="M250 63 v-5 M259 72 h5 M250 81 v5 M241 72 h-5 M256.4 65.6 l3.5 -3.5 M256.4 78.4 l3.5 3.5 M243.6 78.4 l-3.5 3.5 M243.6 65.6 l-3.5 -3.5" stroke="#a5502b" stroke-width="1.3"/>
+          <path d="M244 67 a9 9 0 0 1 6 -4" fill="none" stroke="#fff" stroke-width="1.6"/>
+          <circle cx="320" cy="120" r="6" fill="#2b2620"/>
+          <path d="M320 113 v-4 M327 120 h4 M320 127 v4 M313 120 h-4 M325 115 l3 -3 M325 125 l3 3 M315 125 l-3 3 M315 115 l-3 -3" stroke="#a5502b" stroke-width="1.1"/>
+          <circle cx="378" cy="74" r="13" fill="#2b2620"/>
+          <path d="M378 60 v-6 M392 74 h6 M378 88 v6 M364 74 h-6 M388 64 l4 -4 M388 84 l4 4 M368 84 l-4 4 M368 64 l-4 -4" stroke="#a5502b" stroke-width="1.5"/>
+          <path d="M369 66 a13 13 0 0 1 9 -5" fill="none" stroke="#fff" stroke-width="2"/>
+          <text x="314" y="150" font-size="10" fill="#a5502b" text-anchor="middle">dark core + torn rim + one highlight</text>
+          <polygon points="300,153 303.37,163.37 314.27,163.37 305.45,169.77 308.82,180.14 300,173.73 291.18,180.14 294.55,169.77 285.73,163.37 296.63,163.37" fill="#2b2620"/>
+          <circle cx="309" cy="163" r="4" fill="#fff"/>
+          <path d="M309 156 v-4 M316 163 h4 M309 170 v4 M302 163 h-4" stroke="#a5502b" stroke-width="1.1"/>
+          <text x="300" y="200" font-size="10" fill="#6b6156" text-anchor="middle">get creative: a dented badge is a whole story</text>
+        </svg>`,
+        caption:"Star: 5 points stepped evenly on a circle. Bullet hole: dark core, torn light rim, one highlight, so it reads as depth not a dot",
+        task:"Draw a sheriff star from a construction circle, 3 bullet holes at different sizes, and one creative combo (a bullet-dented badge or a poster corner shot through). Charcoal, push the value contrast on the holes."},
+    ]
+  },
 ];
 
 const TIPS = {
@@ -754,15 +953,17 @@ const REPS_BY_MODULE = {
   m4: "Repeat until you can do it without pausing to think — that's the actual finish line for a gesture drill, not a fixed number of reps.",
   m5: "This one's a one-off exercise, not a drill — but revisit it any time you're stuck on a new design.",
   m6: "This one's a one-off assignment — but revisit it any time you're stuck on a new design.",
+  m7: "This is a real asset commission for SQL Trail, not a drill: take it to a finished, scannable charcoal piece you would actually drop into the game. Revisit any time the game needs a new prop.",
 };
 
-const TIER_BY_MODULE = { m1:"Foundational", m2:"Foundational", m3:"Building", m4:"Building", m5:"Stretch", m6:"Stretch" };
-const TIER_COLOR = { Foundational:"#5c7a4a", Building:"#a5502b", Stretch:"#8a3b8f" };
+const TIER_BY_MODULE = { m1:"Foundational", m2:"Foundational", m3:"Building", m4:"Building", m5:"Stretch", m6:"Stretch", m7:"Applied" };
+const TIER_COLOR = { Foundational:"#5c7a4a", Building:"#a5502b", Stretch:"#8a3b8f", Applied:"#b1802f" };
 
 const INTERLEAVE_BY_MODULE = {
   m4: "Mix it in: before this rep, warm up with one 30-second gesture line (Module 3.1) first — interleaving an older skill with a new one cements both better than drilling this alone.",
   m5: "Mix it in: warm up with one silhouette-fill test (Module 2.2) on your first thumbnail before you commit — bouncing between skills beats doing this one in isolation.",
   m6: "Mix it in: this assignment leans on almost everything so far (Module 1 construction, Module 2 silhouette, Module 3/4 gesture and animation) — that blend IS the interleaving, which is exactly why these assignments come last.",
+  m7: "Mix it in: these frontier pieces pull from almost everything (Module 1 construction, Module 2 silhouette, Module 4 motion, Module 6.7 scenery). Warm up with one silhouette-fill (2.2) before you commit each drawing.",
 };
 
 function successChecklist(){
